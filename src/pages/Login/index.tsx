@@ -39,7 +39,7 @@ const Login = () => {
                 </Typography>
             </Box>
 
-            <RoundedCornerContainer>
+            <RoundedCornerContainer paddingTop="3.5rem">
                 <DefaultInput
                     focus={focusMatricula}
                     setFocus={setFocusMatricula}

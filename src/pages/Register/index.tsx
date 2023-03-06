@@ -1,4 +1,4 @@
-import { Box, IconButton } from '@mui/material'
+import { Box, IconButton, MenuItem } from '@mui/material'
 import { useState } from 'react'
 import DefaultButton from '../../components/DefaultButton'
 import DefaultContainer from '../../components/DefaultContainer'
@@ -7,6 +7,7 @@ import RoundedCornerContainer from '../../components/RoundedCornerContainer'
 import Logo from '../../assets/logo.svg'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { useTheme } from '@mui/material/styles'
+import DefaultSelect from '../../components/DefaultSelect'
 
 const Register = () => {
     const [focusMatricula, setFocusMatricula] = useState<boolean>(false)
@@ -50,7 +51,7 @@ const Register = () => {
                     }}
                 />
             </Box>
-            <RoundedCornerContainer>
+            <RoundedCornerContainer paddingTop="2.5rem">
                 <DefaultInput
                     focus={focusMatricula}
                     setFocus={setFocusMatricula}
@@ -71,6 +72,30 @@ const Register = () => {
                     label="Senha"
                     placeholder="Digite uma senha"
                     type="password"
+                />
+                <DefaultSelect
+                    label={'Função'}
+                    labelId={'funcao'}
+                    options={[
+                        <MenuItem key="funcionario" value="funcionario">
+                            Funcionário
+                        </MenuItem>,
+                        <MenuItem key="gestor" value="gestor">
+                            Gestor
+                        </MenuItem>,
+                    ]}
+                />
+                <DefaultSelect
+                    label={'Tipo de Contratação'}
+                    labelId={'tipoContratacao'}
+                    options={[
+                        <MenuItem key="clt" value="clt">
+                            CLT
+                        </MenuItem>,
+                        <MenuItem key="pj" value="pj">
+                            PJ
+                        </MenuItem>,
+                    ]}
                 />
                 <DefaultButton content="Finalizar Cadastro" />
             </RoundedCornerContainer>
