@@ -8,13 +8,24 @@ import {
     Typography,
     Divider,
     Link,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+    ListItemButton,
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import AccountCircle from '@mui/icons-material/AccountCircle'
 import NotificationsIcon from '@mui/icons-material/Notifications'
+import EventAvailableIcon from '@mui/icons-material/EventAvailable'
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
+import LogoutIcon from '@mui/icons-material/Logout'
 import Badge from '@mui/material/Badge'
 import { useTheme } from '@mui/material/styles'
 import { useState } from 'react'
+import Drawer from '@mui/material/Drawer'
+
+const drawerWidth = 240
 
 const Header = () => {
     const theme = useTheme()
@@ -33,13 +44,15 @@ const Header = () => {
     }
 
     const handleOpenSidebarMenu = () => {
-        console.log(openSidebarMenu)
         setOpenSidebarMenu(!openSidebarMenu)
     }
 
     return (
-        <>
-            <AppBar position="fixed">
+        <Box sx={{ display: 'flex' }}>
+            <AppBar
+                position="fixed"
+                sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            >
                 <Toolbar
                     sx={{
                         color: `${theme.palette.common.white}`,
@@ -92,36 +105,61 @@ const Header = () => {
                     </Box>
                 </Toolbar>
             </AppBar>
-            {openSidebarMenu === true ? (
-                <Box
-                    component="div"
-                    sx={{
-                        position: 'absolute',
-                        top: '56px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'flex-start',
+            <Drawer
+                anchor="left"
+                open={openSidebarMenu}
+                onClose={handleOpenSidebarMenu}
+                variant="temporary"
+                sx={{
+                    width: drawerWidth,
+                    flexShrink: 0,
+                    [`& .MuiDrawer-paper`]: {
+                        width: drawerWidth,
+                        boxSizing: 'border-box',
                         justifyContent: 'space-between',
-                        height: 'calc(100vh - 56px)',
-                        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)',
-                    }}
-                >
-                    <Box
-                        component="div"
-                        sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                        }}
-                    >
-                        <Link href="#">Solicitar férias e 13º</Link>
-                        <Link href="#">Aprovações</Link>
+                    },
+                }}
+                hideBackdrop={true}
+            >
+                <div>
+                    <Toolbar />
+                    <Box sx={{ overflow: 'auto' }}>
+                        <List
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                            }}
+                        >
+                            {[
+                                'Solicitar férias e 13º',
+                                'Todas as solicitações',
+                            ].map((text, index) => (
+                                <ListItem key={text} disablePadding>
+                                    <ListItemButton>
+                                        <ListItemIcon>
+                                            {index % 2 === 0 ? (
+                                                <CalendarMonthIcon />
+                                            ) : (
+                                                <EventAvailableIcon />
+                                            )}
+                                        </ListItemIcon>
+                                        <ListItemText primary={text} />
+                                    </ListItemButton>
+                                </ListItem>
+                            ))}
+                        </List>
                     </Box>
-                    <Link href="#">Sair</Link>
-                </Box>
-            ) : (
-                ''
-            )}
-        </>
+                </div>
+                <ListItem key="Logout" disablePadding>
+                    <ListItemButton>
+                        <ListItemIcon>
+                            <LogoutIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Logout" />
+                    </ListItemButton>
+                </ListItem>
+            </Drawer>
+        </Box>
     )
 }
 
