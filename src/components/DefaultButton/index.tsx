@@ -3,9 +3,10 @@ import { Button } from '@mui/material'
 
 type PropTypes = {
     content: string
+    small?: boolean
 }
 
-const DefaultButton = ({ content }: PropTypes) => {
+const DefaultButton = ({ content, small }: PropTypes) => {
     const theme = useTheme()
 
     return (
@@ -18,7 +19,7 @@ const DefaultButton = ({ content }: PropTypes) => {
                 backgroundColor: `${theme.palette.primary.main}`,
                 width: '100%',
                 marginTop: '1rem',
-                padding: '1rem 0 1rem 0',
+                padding: `${small ? '0.5rem' : '1rem 0 1rem 0'}`,
                 ':hover': {
                     backgroundColor: `${theme.palette.primary.dark}`,
                 },
