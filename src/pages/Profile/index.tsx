@@ -3,7 +3,6 @@ import {
     Box,
     Button,
     Container,
-    Link,
     Stack,
     Typography,
 } from '@mui/material'
@@ -37,7 +36,16 @@ const Profile = () => {
                         >
                             F
                         </Avatar>
-                        <Link>Mudar Avatar</Link>
+                        <Button
+                            variant="text"
+                            size="small"
+                            sx={{
+                                cursor: 'pointer',
+                                textDecoration: 'underline',
+                            }}
+                        >
+                            Mudar Avatar
+                        </Button>
                     </Stack>
                     <DefaultCard>
                         <Stack gap="10px">
@@ -68,6 +76,11 @@ const Profile = () => {
                                         borderRadius: '5px',
                                         height: '25px',
                                         alignSelf: 'flex-end',
+                                        ':hover': {
+                                            backgroundColor: 'secondary.dark',
+                                            color: 'secondary.main',
+                                        },
+                                        transition: 'all ease-in-out 0.3s',
                                     }}
                                 >
                                     Editar
