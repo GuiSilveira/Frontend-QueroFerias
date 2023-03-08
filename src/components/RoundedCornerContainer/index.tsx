@@ -4,6 +4,7 @@ type PropType = {
     paddingTop: string
     children: JSX.Element[]
 }
+
 const RoundedCornerContainer = ({ paddingTop, children }: PropType) => {
     return (
         <Container
