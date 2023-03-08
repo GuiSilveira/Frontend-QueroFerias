@@ -2,7 +2,7 @@ import { useTheme } from '@mui/material/styles'
 import { Card, CardContent } from '@mui/material'
 
 type PropType = {
-    children: JSX.Element[]
+    children: JSX.Element[] | JSX.Element
 }
 
 const DefaultCard = ({ children }: PropType) => {
@@ -23,7 +23,7 @@ const DefaultCard = ({ children }: PropType) => {
                     height: '100%',
                 }}
             >
-                {...children}
+                {children}
             </CardContent>
         </Card>
     )

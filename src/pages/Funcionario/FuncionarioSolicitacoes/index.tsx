@@ -24,6 +24,7 @@ const FuncionarioSolicitacoes = () => {
                         flexDirection: 'column',
                         gap: '14px',
                         marginTop: '10px',
+                        marginBottom: '20px',
                     }}
                 >
                     <DefaultCard>
