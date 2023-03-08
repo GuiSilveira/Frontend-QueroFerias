@@ -17,7 +17,7 @@ const DefaultButton = ({ content }: PropTypes) => {
                 color: `${theme.palette.common.white}`,
                 backgroundColor: `${theme.palette.primary.main}`,
                 width: '100%',
-                marginTop: '40px',
+                marginTop: '1rem',
                 padding: '1rem 0 1rem 0',
                 ':hover': {
                     backgroundColor: `${theme.palette.primary.dark}`,

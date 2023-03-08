@@ -7,6 +7,7 @@ type PropTypes = {
     label: string
     placeholder: string
     type: string
+    multiline?: boolean
 }
 
 const DefaultInput = ({
@@ -15,6 +16,7 @@ const DefaultInput = ({
     label,
     placeholder,
     type,
+    multiline,
 }: PropTypes) => {
     return (
         <TextField
@@ -23,6 +25,7 @@ const DefaultInput = ({
             placeholder={placeholder}
             fullWidth
             required
+            multiline={multiline ? multiline : false}
             type={type}
             sx={{
                 marginTop: '20px',

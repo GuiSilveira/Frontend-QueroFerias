@@ -7,12 +7,12 @@ import {
     Toolbar,
     Typography,
     Divider,
-    Link,
     List,
     ListItem,
     ListItemIcon,
     ListItemText,
     ListItemButton,
+    Button,
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import AccountCircle from '@mui/icons-material/AccountCircle'
@@ -150,14 +150,18 @@ const Header = () => {
                         </List>
                     </Box>
                 </div>
-                <ListItem key="Logout" disablePadding>
-                    <ListItemButton>
-                        <ListItemIcon>
-                            <LogoutIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Logout" />
-                    </ListItemButton>
-                </ListItem>
+                <Button
+                    variant="text"
+                    startIcon={<LogoutIcon />}
+                    color="inherit"
+                    sx={{
+                        justifyContent: 'flex-start',
+                        padding: '0.5rem 1.5rem',
+                        gap: '1rem',
+                    }}
+                >
+                    Sair
+                </Button>
             </Drawer>
         </Box>
     )
