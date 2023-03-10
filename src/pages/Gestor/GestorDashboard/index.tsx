@@ -1,8 +1,9 @@
-import { Box, Container, Divider, Stack, Typography } from '@mui/material'
+import { Container, Stack } from '@mui/material'
 import Header from '../../../components/Header'
-import DefaultTitle from '../../../components/DefaultTitle'
-import DefaultCard from '../../../components/DefaultCard'
-import DefaultButton from '../../../components/DefaultButton'
+import CardNotificações from './CardNotificações'
+import CardEventosFuturos from './CardEventosFuturos'
+import CardTime from './CardTime'
+import CardCalendario from './CardCalendario'
 
 const GestorDashboard = () => (
     <>
@@ -10,36 +11,14 @@ const GestorDashboard = () => (
         <Container
             sx={{
                 marginTop: '71px',
+                marginBottom: '30px',
             }}
         >
             <Stack gap="30px">
-                <Box>
-                    <DefaultTitle>Suas Notificações</DefaultTitle>
-                    <DefaultCard>
-                        <Typography fontWeight="medium" color="grey.500">
-                            Notificações
-                        </Typography>
-                        <Divider />
-                        <Typography marginTop="5px">Você possui</Typography>
-                        <Typography
-                            color="primary.main"
-                            fontWeight="bold"
-                            fontSize="50px"
-                        >
-                            9
-                        </Typography>
-                        <Typography>
-                            solicitações de agendamento de férias pendentes
-                        </Typography>
-                        <DefaultButton
-                            small={true}
-                            content={'Ir para solicitações'}
-                        />
-                    </DefaultCard>
-                </Box>
-                <Box>
-                    <DefaultTitle>Eventos Futuros</DefaultTitle>
-                </Box>
+                <CardNotificações />
+                <CardEventosFuturos />
+                <CardTime />
+                <CardCalendario />
             </Stack>
         </Container>
     </>
