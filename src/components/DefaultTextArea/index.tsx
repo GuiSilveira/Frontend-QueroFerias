@@ -7,6 +7,7 @@ const DefaultTextArea = () => {
             placeholder="Digite aqui a sua mensagem..."
             multiline
             rows={3}
+            fullWidth
             sx={{ marginTop: '20px' }}
             InputLabelProps={{
                 shrink: true,

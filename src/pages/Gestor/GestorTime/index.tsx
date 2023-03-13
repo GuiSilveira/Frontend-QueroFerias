@@ -1,14 +1,12 @@
 import {
     Avatar,
     Box,
-    Button,
     Card,
     Container,
     IconButton,
     InputBase,
     List,
     ListItemButton,
-    Modal,
     Stack,
     Typography,
 } from '@mui/material'
@@ -20,6 +18,7 @@ import CardBoldTitleWithStatus from '../../../components/CardBoldTitleWithStatus
 import DefaultCard from '../../../components/DefaultCard'
 import CardBoldTitle from '../../../components/CardBoldTitle'
 import CustomButton from '../../../components/CustomButton'
+import DefaultModal from '../../../components/DefaultModal'
 
 const GestorTime = () => {
     const [searchQuery, setSearchQuery] = useState('')
@@ -122,89 +121,52 @@ const GestorTime = () => {
                                         </Box>
                                     </ListItemButton>
                                 </List>
-                                <Modal
-                                    open={open}
-                                    onClose={handleClose}
-                                    aria-labelledby="child-modal-title"
-                                    aria-describedby="child-modal-description"
+                                <DefaultModal
+                                    isOpen={open}
+                                    closeModal={handleClose}
+                                    handleApproval={handleClose}
+                                    approveText="Adicionar"
+                                    rejectText="Recusar"
                                 >
                                     <Box
                                         sx={{
-                                            width: '90%',
-                                            maxWidth: '370px',
-                                            backgroundColor: 'white',
-                                            position: 'absolute',
-                                            top: '50%',
-                                            left: '50%',
-                                            transform: 'translate(-50%, -50%)',
-                                            borderRadius: '10px',
-                                            pt: 2,
-                                            px: 4,
-                                            pb: 3,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '1rem',
                                         }}
                                     >
-                                        <Box
+                                        <Avatar
                                             sx={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: '1rem',
+                                                backgroundColor:
+                                                    'primary.light',
+                                                color: 'primary.main',
+                                                width: 50,
+                                                height: 50,
+                                                fontSize: 20,
+                                                fontWeight: 'medium',
                                             }}
                                         >
-                                            <Avatar
-                                                sx={{
-                                                    backgroundColor:
-                                                        'primary.light',
-                                                    color: 'primary.main',
-                                                    width: 50,
-                                                    height: 50,
-                                                    fontSize: 20,
-                                                    fontWeight: 'medium',
-                                                }}
-                                            >
-                                                F
-                                            </Avatar>
-                                            <Box>
-                                                <CardBoldTitle>
-                                                    Fulano de Tal
-                                                </CardBoldTitle>
-                                                <Typography>
-                                                    Desenvolvedor Mobile
-                                                </Typography>
-                                            </Box>
-                                        </Box>
-                                        <Typography
-                                            sx={{
-                                                marginTop: '.5rem',
-                                                marginBottom: '1rem',
-                                            }}
-                                        >
-                                            Você deseja adicionar essa pessoa ao
-                                            seu time?
-                                        </Typography>
-                                        <Box
-                                            display="flex"
-                                            justifyContent="center"
-                                            gap="1rem"
-                                        >
-                                            <CustomButton
-                                                type="approve"
-                                                variant="contained"
-                                                startIcon={true}
-                                                onClick={handleClose}
-                                            >
-                                                Sim
-                                            </CustomButton>
-                                            <CustomButton
-                                                type="reject"
-                                                variant="outlined"
-                                                startIcon={true}
-                                                onClick={handleClose}
-                                            >
-                                                Não
-                                            </CustomButton>
+                                            F
+                                        </Avatar>
+                                        <Box>
+                                            <CardBoldTitle>
+                                                Fulano de Tal
+                                            </CardBoldTitle>
+                                            <Typography>
+                                                Desenvolvedor Mobile
+                                            </Typography>
                                         </Box>
                                     </Box>
-                                </Modal>
+                                    <Typography
+                                        sx={{
+                                            marginTop: '.5rem',
+                                            marginBottom: '1rem',
+                                        }}
+                                    >
+                                        Você deseja adicionar essa pessoa ao seu
+                                        time?
+                                    </Typography>
+                                </DefaultModal>
                             </Card>
                         )}
                     </Box>

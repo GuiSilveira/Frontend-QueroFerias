@@ -29,7 +29,9 @@ const CustomButton = ({
                     ) : (
                         <ClearIcon />
                     )
-                ) : null
+                ) : (
+                    ''
+                )
             }
             color={type === 'approve' ? 'primary' : 'warning'}
             sx={{

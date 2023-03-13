@@ -21,8 +21,8 @@ function App() {
         // <FuncionarioSolicitacoes />
         // <Profile />
         // <GestorDashboard />
-        // <GestorSolicitacoes />
-        <GestorTime />
+        <GestorSolicitacoes />
+        // <GestorTime />
     )
 }
 

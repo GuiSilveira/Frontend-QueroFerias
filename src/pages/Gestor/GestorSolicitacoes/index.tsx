@@ -1,14 +1,31 @@
-import { Box, Button, Container, Stack, Typography } from '@mui/material'
+import {
+    Box,
+    Container,
+    List,
+    ListItem,
+    Stack,
+    Typography,
+} from '@mui/material'
 import CardBoldTitle from '../../../components/CardBoldTitle'
 import DefaultCard from '../../../components/DefaultCard'
 import DefaultFilter from '../../../components/DefaultFilter'
 import DefaultTitle from '../../../components/DefaultTitle'
 import Header from '../../../components/Header'
-import DoneIcon from '@mui/icons-material/Done'
-import ClearIcon from '@mui/icons-material/Clear'
 import CardBoldTitleWithStatus from '../../../components/CardBoldTitleWithStatus'
+import CustomButton from '../../../components/CustomButton'
+import { useState } from 'react'
+import DefaultModal from '../../../components/DefaultModal'
+import DefaultTextArea from '../../../components/DefaultTextArea'
 
 const GestorSolicitacoes = () => {
+    const [open, setOpen] = useState(false)
+    const handleOpen = () => {
+        setOpen(true)
+    }
+    const handleClose = () => {
+        setOpen(false)
+    }
+
     return (
         <Box>
             <Header />
@@ -20,53 +37,96 @@ const GestorSolicitacoes = () => {
             >
                 <DefaultTitle>Solicitações</DefaultTitle>
                 <DefaultFilter />
-                <Box marginTop="0.75rem">
-                    <DefaultCard>
-                        <Stack
-                            flexDirection="column"
-                            justifyContent="space-between"
+                <List
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '1rem',
+                    }}
+                >
+                    <ListItem
+                        sx={{
+                            padding: '0',
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                width: '100%',
+                            }}
                         >
-                            <Box marginBottom="1rem">
-                                <CardBoldTitle>Colaborador</CardBoldTitle>
-                                <Typography>Fulano de Tal</Typography>
-                                <CardBoldTitle>Férias</CardBoldTitle>
-                                <Typography>
-                                    De 08/17/2023 até 08/17/2023
-                                </Typography>
-                                <CardBoldTitle>Mensagem</CardBoldTitle>
-                                <Typography>
-                                    Lorem ipsum sit dor amet
-                                </Typography>
-                                <CardBoldTitleWithStatus color={'grey.500'}>
-                                    Pendente
-                                </CardBoldTitleWithStatus>
-                            </Box>
-                            <Stack flexDirection="row" gap="1rem" margin="auto">
-                                // TODO: Componentizar esses botões
-                                <Button
-                                    variant="contained"
-                                    startIcon={<DoneIcon />}
-                                    color="primary"
-                                    sx={{
-                                        color: 'white',
-                                    }}
+                            <DefaultCard>
+                                <Stack
+                                    flexDirection="column"
+                                    justifyContent="space-between"
                                 >
-                                    Aceitar
-                                </Button>
-                                <Button
-                                    variant="outlined"
-                                    startIcon={<ClearIcon />}
-                                    color="warning"
-                                    sx={{
-                                        color: 'warning.main',
-                                    }}
-                                >
-                                    Recusar
-                                </Button>
-                            </Stack>
-                        </Stack>
-                    </DefaultCard>
-                </Box>
+                                    <Box marginBottom="1rem">
+                                        <CardBoldTitle>
+                                            Colaborador
+                                        </CardBoldTitle>
+                                        <Typography>Fulano de Tal</Typography>
+                                        <CardBoldTitle>Férias</CardBoldTitle>
+                                        <Typography>
+                                            De 08/17/2023 até 08/17/2023
+                                        </Typography>
+                                        <CardBoldTitle>Mensagem</CardBoldTitle>
+                                        <Typography>
+                                            Lorem ipsum sit dor amet
+                                        </Typography>
+                                        <CardBoldTitleWithStatus
+                                            color={'grey.500'}
+                                        >
+                                            Pendente
+                                        </CardBoldTitleWithStatus>
+                                    </Box>
+                                    <Stack
+                                        flexDirection="row"
+                                        gap="1rem"
+                                        margin="auto"
+                                    >
+                                        <CustomButton
+                                            type="approve"
+                                            variant="contained"
+                                            startIcon={true}
+                                        >
+                                            Aceitar
+                                        </CustomButton>
+                                        <CustomButton
+                                            type="reject"
+                                            startIcon={true}
+                                            variant="outlined"
+                                            onClick={handleOpen}
+                                        >
+                                            Recusar
+                                        </CustomButton>
+                                    </Stack>
+                                </Stack>
+                            </DefaultCard>
+                        </Box>
+                    </ListItem>
+                </List>
+                <DefaultModal
+                    isOpen={open}
+                    closeModal={handleClose}
+                    handleApproval={handleClose}
+                    approveText={'Enviar'}
+                    rejectText={'Cancelar'}
+                >
+                    <Box marginBottom="1rem">
+                        <CardBoldTitle>Dados da Solicitação</CardBoldTitle>
+                        <CardBoldTitle>Colaborador</CardBoldTitle>
+                        <Typography>Fulano de Tal</Typography>
+                        <CardBoldTitle>Férias</CardBoldTitle>
+                        <Typography>De 08/17/2023 até 08/17/2023</Typography>
+                        <CardBoldTitle>Mensagem</CardBoldTitle>
+                        <Typography>Lorem ipsum sit dor amet</Typography>
+                    </Box>
+                    <Box marginBottom="1rem">
+                        <CardBoldTitle>
+                            Informe o motivo da recusa
+                        </CardBoldTitle>
+                        <DefaultTextArea></DefaultTextArea>
+                    </Box>
+                </DefaultModal>
             </Container>
         </Box>
     )
