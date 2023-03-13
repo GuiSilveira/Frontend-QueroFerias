@@ -6,6 +6,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import FuncionarioSolicitacoes from './pages/Funcionario/FuncionarioSolicitacoes'
 import Profile from './pages/Profile'
 import GestorDashboard from './pages/Gestor/GestorDashboard'
+import GestorSolicitacoes from './pages/Gestor/GestorSolicitacoes'
+import GestorTime from './pages/Gestor/GestorTime'
 import '@tremor/react/dist/esm/tremor.css'
 import 'kalend/dist/styles/index.css'
 
@@ -18,7 +20,9 @@ function App() {
         // </LocalizationProvider>
         // <FuncionarioSolicitacoes />
         // <Profile />
-        <GestorDashboard />
+        // <GestorDashboard />
+        // <GestorSolicitacoes />
+        <GestorTime />
     )
 }
 

@@ -3,9 +3,10 @@ import { Card, CardContent } from '@mui/material'
 
 type PropType = {
     children: JSX.Element[] | JSX.Element
+    maxWidth?: string
 }
 
-const DefaultCard = ({ children }: PropType) => {
+const DefaultCard = ({ children, maxWidth }: PropType) => {
     const theme = useTheme()
     return (
         <Card
@@ -13,7 +14,7 @@ const DefaultCard = ({ children }: PropType) => {
                 backgroundColor: `${theme.palette.common.white}`,
                 borderRadius: '5px',
                 boxShadow: `0px 4px 4px rgba(0,0,0,0.25)`,
-                width: '100%',
+                maxWidth: maxWidth ? maxWidth : '100%',
             }}
         >
             <CardContent

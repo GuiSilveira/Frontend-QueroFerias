@@ -1,11 +1,4 @@
-import {
-    MenuItem,
-    Select,
-    FormControl,
-    InputLabel,
-    ExtendButtonBase,
-    MenuItemTypeMap,
-} from '@mui/material'
+import { Select, FormControl, InputLabel } from '@mui/material'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 
 type PropTypes = {
