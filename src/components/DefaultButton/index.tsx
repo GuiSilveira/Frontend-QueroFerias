@@ -4,14 +4,16 @@ import { Button } from '@mui/material'
 type PropTypes = {
     content: string
     small?: boolean
+    onClick?: () => void
 }
 
-const DefaultButton = ({ content, small }: PropTypes) => {
+const DefaultButton = ({ content, small, onClick }: PropTypes) => {
     const theme = useTheme()
 
     return (
         <Button
             variant="outlined"
+            onClick={onClick}
             sx={{
                 borderRadius: '40px',
                 border: 'none',

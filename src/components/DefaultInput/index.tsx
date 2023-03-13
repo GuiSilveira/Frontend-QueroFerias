@@ -1,4 +1,4 @@
-import { InputAdornment, TextField } from '@mui/material'
+import { IconButton, InputAdornment, TextField } from '@mui/material'
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined'
 
 type PropTypes = {
@@ -8,6 +8,7 @@ type PropTypes = {
     placeholder: string
     type: string
     multiline?: boolean
+    marginBottom?: string
 }
 
 const DefaultInput = ({
@@ -17,6 +18,7 @@ const DefaultInput = ({
     placeholder,
     type,
     multiline,
+    marginBottom,
 }: PropTypes) => {
     return (
         <TextField
@@ -29,6 +31,7 @@ const DefaultInput = ({
             type={type}
             sx={{
                 marginTop: '20px',
+                marginBottom: marginBottom ? marginBottom : '',
             }}
             onFocus={() => {
                 setFocus(true)

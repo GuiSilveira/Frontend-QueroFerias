@@ -6,11 +6,24 @@ import {
     Stack,
     Typography,
 } from '@mui/material'
+import { SetStateAction, useState } from 'react'
 import DefaultCard from '../../components/DefaultCard'
+import DefaultInput from '../../components/DefaultInput'
+import DefaultModal from '../../components/DefaultModal'
 import DefaultTitle from '../../components/DefaultTitle'
 import Header from '../../components/Header'
 
 const Profile = () => {
+    const [open, setOpen] = useState(false)
+    const [focusPassword, setFocusPassword] = useState<boolean>(false)
+
+    const handleOpen = () => {
+        setOpen(true)
+    }
+    const handleClose = () => {
+        setOpen(false)
+    }
+
     return (
         <>
             <Header />
@@ -69,6 +82,7 @@ const Profile = () => {
                                     <Typography>******</Typography>
                                 </Box>
                                 <Button
+                                    onClick={handleOpen}
                                     size="small"
                                     sx={{
                                         backgroundColor: 'secondary.main',
@@ -85,6 +99,22 @@ const Profile = () => {
                                 >
                                     Editar
                                 </Button>
+                                <DefaultModal
+                                    isOpen={open}
+                                    closeModal={handleClose}
+                                    handleApproval={handleClose}
+                                    approveText={'Alterar'}
+                                    rejectText={'Cancelar'}
+                                >
+                                    <DefaultInput
+                                        focus={focusPassword}
+                                        setFocus={setFocusPassword}
+                                        label={'Nova Senha'}
+                                        placeholder={'Digite uma nova senha...'}
+                                        type={'password'}
+                                        marginBottom="1rem"
+                                    />
+                                </DefaultModal>
                             </Stack>
                             <Box>
                                 <Typography

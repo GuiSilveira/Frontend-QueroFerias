@@ -4,8 +4,8 @@ import CustomButton from '../CustomButton'
 type DefaultModalProps = {
     isOpen: boolean
     closeModal: () => void
-    handleApproval: () => void
-    approveText: string
+    handleApproval?: () => void
+    approveText?: string
     rejectText: string
     children: React.ReactNode
 }
@@ -44,14 +44,16 @@ const DefaultModal = ({
             >
                 {children}
                 <Box display="flex" justifyContent="center" gap="1rem">
-                    <CustomButton
-                        type="approve"
-                        variant="contained"
-                        startIcon={true}
-                        onClick={handleApproval}
-                    >
-                        {approveText}
-                    </CustomButton>
+                    {approveText && (
+                        <CustomButton
+                            type="approve"
+                            variant="contained"
+                            startIcon={true}
+                            onClick={handleApproval}
+                        >
+                            {approveText}
+                        </CustomButton>
+                    )}
                     <CustomButton
                         type="reject"
                         variant="outlined"

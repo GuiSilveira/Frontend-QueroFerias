@@ -3,7 +3,7 @@ import CardBoldTitle from '../CardBoldTitle'
 
 type PropTypes = {
     children: string
-    color: 'primary' | 'warning' | 'grey.500'
+    color: 'primary' | 'warning.main' | 'grey.500'
 }
 
 const CardBoldTitleWithStatus = ({ children, color }: PropTypes) => {
