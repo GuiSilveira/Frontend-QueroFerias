@@ -18,8 +18,8 @@ function App() {
         // <LocalizationProvider dateAdapter={AdapterDayjs}>
         //     <FuncionarioSolicitarFerias />
         // </LocalizationProvider>
-        <FuncionarioSolicitacoes />
-        // <Profile />
+        // <FuncionarioSolicitacoes />
+        <Profile />
         // <GestorDashboard />
         // <GestorSolicitacoes />
         // <GestorTime />

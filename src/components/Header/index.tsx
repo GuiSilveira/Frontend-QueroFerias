@@ -24,6 +24,7 @@ import Badge from '@mui/material/Badge'
 import { useTheme } from '@mui/material/styles'
 import { useState } from 'react'
 import Drawer from '@mui/material/Drawer'
+import Logo from '../../assets/logo.svg'
 
 const drawerWidth = 240
 
@@ -60,7 +61,20 @@ const Header = () => {
                         justifyContent: 'space-between',
                     }}
                 >
+                    <Box
+                        component="img"
+                        src={Logo}
+                        display={{
+                            xs: 'none',
+                            md: 'block',
+                        }}
+                    />
                     <IconButton
+                        sx={{
+                            display: {
+                                md: 'none',
+                            },
+                        }}
                         size="large"
                         color="inherit"
                         onClick={handleOpenSidebarMenu}
@@ -111,6 +125,69 @@ const Header = () => {
                 onClose={handleOpenSidebarMenu}
                 variant="temporary"
                 sx={{
+                    display: { xs: 'block', lg: 'none' },
+                    width: drawerWidth,
+                    flexShrink: 0,
+                    [`& .MuiDrawer-paper`]: {
+                        width: drawerWidth,
+                        boxSizing: 'border-box',
+                        justifyContent: 'space-between',
+                    },
+                }}
+                hideBackdrop={true}
+            >
+                <div>
+                    <Toolbar />
+                    <Box sx={{ overflow: 'auto' }}>
+                        <List
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                            }}
+                        >
+                            {[
+                                'Solicitar férias e 13º',
+                                'Todas as solicitações',
+                            ].map((text, index) => (
+                                <ListItem key={text} disablePadding>
+                                    <ListItemButton>
+                                        <ListItemIcon>
+                                            {index % 2 === 0 ? (
+                                                <CalendarMonthIcon />
+                                            ) : (
+                                                <EventAvailableIcon />
+                                            )}
+                                        </ListItemIcon>
+                                        <ListItemText primary={text} />
+                                    </ListItemButton>
+                                </ListItem>
+                            ))}
+                        </List>
+                    </Box>
+                </div>
+                <Button
+                    variant="text"
+                    startIcon={<LogoutIcon />}
+                    color="inherit"
+                    sx={{
+                        justifyContent: 'flex-start',
+                        padding: '0.5rem 1.5rem',
+                        gap: '1rem',
+                    }}
+                >
+                    Sair
+                </Button>
+            </Drawer>
+            <Drawer
+                anchor="left"
+                open={openSidebarMenu}
+                onClose={handleOpenSidebarMenu}
+                variant="permanent"
+                sx={{
+                    display: {
+                        xs: 'none',
+                        md: 'block',
+                    },
                     width: drawerWidth,
                     flexShrink: 0,
                     [`& .MuiDrawer-paper`]: {

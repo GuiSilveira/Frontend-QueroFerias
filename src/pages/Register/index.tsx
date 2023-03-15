@@ -24,16 +24,22 @@ const Register = () => {
                     paddingTop: '2.25rem',
                     paddingBottom: '0.8rem',
                     display: 'flex',
-                    justifyContent: 'center',
+                    justifyContent: 'flex-start',
                     alignItems: 'center',
+                    width: '100%',
+                    '&::after': {
+                        content: '"D"',
+                        visibility: 'hidden',
+                        marginRight: '1rem',
+                        width: '1.5rem',
+                        height: '1.5rem',
+                        padding: '8px',
+                    },
                 }}
             >
                 <IconButton
                     sx={{
-                        marginRight: '50px',
-                        position: 'absolute',
-                        left: '10px',
-                        bottom: 'center',
+                        marginLeft: '1rem',
                     }}
                 >
                     <ArrowBackIcon
@@ -48,10 +54,13 @@ const Register = () => {
                     src={Logo}
                     sx={{
                         textAlign: 'center',
+                        justifyItems: 'center',
+                        marginLeft: 'auto',
+                        marginRight: 'auto',
                     }}
                 />
             </Box>
-            <RoundedCornerContainer paddingTop="2.5rem">
+            <RoundedCornerContainer>
                 <DefaultInput
                     focus={focusMatricula}
                     setFocus={setFocusMatricula}

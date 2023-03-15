@@ -8,7 +8,7 @@ type PropTypes = {
     placeholder: string
     type: string
     multiline?: boolean
-    marginBottom?: string
+    marginBottom?: string | object
 }
 
 const DefaultInput = ({

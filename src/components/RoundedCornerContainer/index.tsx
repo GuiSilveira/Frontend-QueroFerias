@@ -1,21 +1,21 @@
 import { Container } from '@mui/material'
 
 type PropType = {
-    paddingTop: string
-    children: JSX.Element[]
+    children: JSX.Element[] | JSX.Element
 }
 
-const RoundedCornerContainer = ({ paddingTop, children }: PropType) => {
+const RoundedCornerContainer = ({ children }: PropType) => {
     return (
         <Container
             sx={{
                 backgroundColor: 'white',
                 width: '100%',
-                borderRadius: '40px 40px 0 0',
-                paddingTop: { paddingTop },
+                borderRadius: '40px',
+                paddingTop: '2rem',
+                paddingBottom: '2rem',
             }}
         >
-            {...children}
+            {children}
         </Container>
     )
 }
