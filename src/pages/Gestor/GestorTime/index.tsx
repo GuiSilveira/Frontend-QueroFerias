@@ -11,7 +11,6 @@ import {
     Typography,
 } from '@mui/material'
 import DefaultTitle from '../../../components/DefaultTitle'
-import Header from '../../../components/Header'
 import SearchIcon from '@mui/icons-material/Search'
 import { useState } from 'react'
 import CardBoldTitleWithStatus from '../../../components/CardBoldTitleWithStatus'
@@ -32,14 +31,28 @@ const GestorTime = () => {
 
     return (
         <Box>
-            <Header />
             <Container
                 sx={{
-                    marginTop: '93px',
-                    marginBottom: '30px',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '2rem',
+                    justifyContent: {
+                        xs: 'center',
+                        md: 'flex-start',
+                    },
+                    alignItems: {
+                        xs: 'center',
+                        md: 'flex-start',
+                    },
+                    marginTop: '71px',
+                    marginLeft: {
+                        md: '240px',
+                    },
+                    maxWidth: {
+                        md: 'calc(100% - 240px)',
+                    },
+                    padding: {
+                        md: '0 0 0 1rem',
+                    },
                 }}
             >
                 <Box>
@@ -173,8 +186,128 @@ const GestorTime = () => {
                 </Box>
                 <Box>
                     <DefaultTitle>Seu time</DefaultTitle>
-                    <Stack>
-                        <DefaultCard>
+                    <Stack
+                        sx={{
+                            flexDirection: {
+                                xs: 'column',
+                                md: 'row',
+                            },
+                            gap: '1rem',
+                            flexWrap: 'wrap',
+                            paddingRight: '0.725rem',
+                        }}
+                    >
+                        <DefaultCard
+                            width={{
+                                xs: 'calc(100vw - 2rem)',
+                                md: '300px',
+                                lg: '45%',
+                            }}
+                        >
+                            <Box
+                                display="flex"
+                                flexDirection="row"
+                                justifyContent="space-between"
+                            >
+                                <Box
+                                    display="flex"
+                                    alignItems="center"
+                                    gap="1rem"
+                                >
+                                    <Avatar
+                                        sx={{
+                                            backgroundColor: 'primary.light',
+                                            color: 'primary.main',
+                                            width: 50,
+                                            height: 50,
+                                            fontSize: 20,
+                                            fontWeight: 'medium',
+                                        }}
+                                    >
+                                        F
+                                    </Avatar>
+                                    <Box>
+                                        <CardBoldTitle>
+                                            Fulano de Tal
+                                        </CardBoldTitle>
+                                        <Typography>
+                                            Desenvolvedor Mobile
+                                        </Typography>
+                                        <CardBoldTitleWithStatus
+                                            color={'primary'}
+                                        >
+                                            TRABALHANDO
+                                        </CardBoldTitleWithStatus>
+                                    </Box>
+                                </Box>
+                                <Box alignSelf="center">
+                                    <CustomButton
+                                        type="reject"
+                                        variant="contained"
+                                        size="35px"
+                                    />
+                                </Box>
+                            </Box>
+                        </DefaultCard>
+                        <DefaultCard
+                            width={{
+                                xs: 'calc(100vw - 2rem)',
+                                md: '300px',
+                                lg: '45%',
+                            }}
+                        >
+                            <Box
+                                display="flex"
+                                flexDirection="row"
+                                justifyContent="space-between"
+                            >
+                                <Box
+                                    display="flex"
+                                    alignItems="center"
+                                    gap="1rem"
+                                >
+                                    <Avatar
+                                        sx={{
+                                            backgroundColor: 'primary.light',
+                                            color: 'primary.main',
+                                            width: 50,
+                                            height: 50,
+                                            fontSize: 20,
+                                            fontWeight: 'medium',
+                                        }}
+                                    >
+                                        F
+                                    </Avatar>
+                                    <Box>
+                                        <CardBoldTitle>
+                                            Fulano de Tal
+                                        </CardBoldTitle>
+                                        <Typography>
+                                            Desenvolvedor Mobile
+                                        </Typography>
+                                        <CardBoldTitleWithStatus
+                                            color={'primary'}
+                                        >
+                                            TRABALHANDO
+                                        </CardBoldTitleWithStatus>
+                                    </Box>
+                                </Box>
+                                <Box alignSelf="center">
+                                    <CustomButton
+                                        type="reject"
+                                        variant="contained"
+                                        size="35px"
+                                    />
+                                </Box>
+                            </Box>
+                        </DefaultCard>
+                        <DefaultCard
+                            width={{
+                                xs: 'calc(100vw - 2rem)',
+                                md: '300px',
+                                lg: '45%',
+                            }}
+                        >
                             <Box
                                 display="flex"
                                 flexDirection="row"

@@ -1,4 +1,5 @@
 import { Box, Typography, Divider } from '@mui/material'
+import { Link } from 'react-router-dom'
 import DefaultButton from '../../../../components/DefaultButton'
 import DefaultCard from '../../../../components/DefaultCard'
 import DefaultTitle from '../../../../components/DefaultTitle'
@@ -7,7 +8,13 @@ const CardNotificações = () => {
     return (
         <Box>
             <DefaultTitle>Suas Notificações</DefaultTitle>
-            <DefaultCard>
+            <DefaultCard
+                width={{
+                    xs: 'calc(100vw - 2rem)',
+                    md: '300px',
+                    lg: '100%',
+                }}
+            >
                 <Typography fontWeight="medium" color="grey.500">
                     Notificações
                 </Typography>
@@ -23,7 +30,15 @@ const CardNotificações = () => {
                 <Typography>
                     solicitações de agendamento de férias pendentes
                 </Typography>
-                <DefaultButton small={true} content={'Ir para solicitações'} />
+                <Link
+                    to={'/home/solicitacoes'}
+                    style={{ textDecoration: 'none' }}
+                >
+                    <DefaultButton
+                        small={true}
+                        content={'Ir para solicitações'}
+                    />
+                </Link>
             </DefaultCard>
         </Box>
     )

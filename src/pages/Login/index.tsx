@@ -1,14 +1,19 @@
-import { Box, Container, Typography, useMediaQuery } from '@mui/material'
-import { useState } from 'react'
+import { Box, Typography, useMediaQuery } from '@mui/material'
+import { useState, useContext } from 'react'
 import DefaultButton from '../../components/DefaultButton'
 import DefaultInput from '../../components/DefaultInput'
 import Logo from '../../assets/logo.svg'
 import RoundedCornerContainer from '../../components/RoundedCornerContainer'
 import DefaultContainer from '../../components/DefaultContainer'
+import { ActionFunctionArgs, Form, redirect } from 'react-router-dom'
+import api from '../../services/api'
 
 const Login = () => {
     const [focusMatricula, setFocusMatricula] = useState<boolean>(false)
     const [focusPassword, setFocusPassword] = useState<boolean>(false)
+    const [matricula, setMatricula] = useState<string>('')
+    const [password, setPassword] = useState<string>('')
+
     const mobile = useMediaQuery('(max-width: 500px)')
 
     return (
@@ -45,24 +50,47 @@ const Login = () => {
                 </Box>
             </Box>
             <RoundedCornerContainer>
-                <DefaultInput
-                    focus={focusMatricula}
-                    setFocus={setFocusMatricula}
-                    label="Matrícula"
-                    placeholder="Ex: 985000"
-                    type="text"
-                />
-                <DefaultInput
-                    focus={focusPassword}
-                    setFocus={setFocusPassword}
-                    label="Senha"
-                    placeholder="Digite aqui sua senha"
-                    type="password"
-                />
-                <DefaultButton content="Entrar" />
+                <Form method="post">
+                    <DefaultInput
+                        focus={focusMatricula}
+                        setFocus={setFocusMatricula}
+                        label="Matrícula"
+                        placeholder="Ex: 985000"
+                        type="text"
+                        setChange={setMatricula}
+                        name="matricula"
+                    />
+                    <DefaultInput
+                        focus={focusPassword}
+                        setFocus={setFocusPassword}
+                        label="Senha"
+                        placeholder="Digite aqui sua senha"
+                        type="password"
+                        setChange={setPassword}
+                        name="password"
+                    />
+                    <DefaultButton type="submit" content="Entrar" />
+                </Form>
             </RoundedCornerContainer>
         </DefaultContainer>
     )
 }
 
 export default Login
+
+export async function loginAction({ request }: ActionFunctionArgs) {
+    const data = await request.formData()
+    const authData = {
+        credential: data.get('matricula'),
+        password: data.get('password'),
+    }
+
+    const response = await api.post('/auth/login', authData)
+    const { accessToken } = response.data
+
+    // TODO: Tratar erro caso o status code seja diferente de 200
+
+    localStorage.setItem('token', accessToken)
+
+    return redirect('/home')
+}

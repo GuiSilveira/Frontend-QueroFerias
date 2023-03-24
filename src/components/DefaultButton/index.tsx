@@ -5,9 +5,10 @@ type PropTypes = {
     content: string
     small?: boolean
     onClick?: () => void
+    type?: 'submit' | 'reset' | 'button'
 }
 
-const DefaultButton = ({ content, small, onClick }: PropTypes) => {
+const DefaultButton = ({ content, small, onClick, type }: PropTypes) => {
     const theme = useTheme()
 
     return (
@@ -27,6 +28,7 @@ const DefaultButton = ({ content, small, onClick }: PropTypes) => {
                 },
                 transition: 'all ease-in-out 0.3s',
             }}
+            type={type}
         >
             {content}
         </Button>

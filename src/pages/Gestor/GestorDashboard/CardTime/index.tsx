@@ -53,7 +53,13 @@ const CardTime = () => {
         <Box>
             <DefaultTitle>Seu Time</DefaultTitle>
             <Stack gap="1rem">
-                <DefaultCard>
+                <DefaultCard
+                    width={{
+                        xs: 'calc(100vw - 2rem)',
+                        md: '300px',
+                        lg: '100%',
+                    }}
+                >
                     <Typography
                         marginBottom="1.5rem"
                         marginLeft="2.625rem"
@@ -136,7 +142,13 @@ const CardTime = () => {
                         </Stack>
                     </Stack>
                 </DefaultCard>
-                <DefaultCard>
+                <DefaultCard
+                    width={{
+                        xs: 'calc(100vw - 2rem)',
+                        md: '300px',
+                        lg: '100%',
+                    }}
+                >
                     <Typography
                         marginBottom="1.5rem"
                         textAlign="center"

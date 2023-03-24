@@ -8,7 +8,13 @@ const CardEventosFuturos = () => {
         <Box>
             <DefaultTitle>Eventos Futuros</DefaultTitle>
             <Stack gap="1rem">
-                <DefaultCard>
+                <DefaultCard
+                    width={{
+                        xs: 'calc(100vw - 2rem)',
+                        md: '300px',
+                        lg: '100%',
+                    }}
+                >
                     <Box display="flex" alignItems="center" gap="5px">
                         <AdjustOutlinedIcon
                             color="primary"
@@ -27,7 +33,13 @@ const CardEventosFuturos = () => {
                         Ficará 10 dias fora do trabalho
                     </Typography>
                 </DefaultCard>
-                <DefaultCard>
+                <DefaultCard
+                    width={{
+                        xs: 'calc(100vw - 2rem)',
+                        md: '300px',
+                        lg: '100%',
+                    }}
+                >
                     <Box display="flex" alignItems="center" gap="5px">
                         <AdjustOutlinedIcon
                             color="primary"
@@ -46,7 +58,38 @@ const CardEventosFuturos = () => {
                         Ficará 10 dias fora do trabalho
                     </Typography>
                 </DefaultCard>
-                <DefaultCard>
+                <DefaultCard
+                    width={{
+                        xs: 'calc(100vw - 2rem)',
+                        md: '300px',
+                        lg: '100%',
+                    }}
+                >
+                    <Box display="flex" alignItems="center" gap="5px">
+                        <AdjustOutlinedIcon
+                            color="primary"
+                            sx={{
+                                fontSize: '0.75rem',
+                            }}
+                        />
+                        <Typography fontSize="0.75rem" color="grey.500">
+                            Dia 10 até dia 17
+                        </Typography>
+                    </Box>
+                    <Typography fontWeight="medium">
+                        Fulano de Tal estará de férias
+                    </Typography>
+                    <Typography fontSize="0.75rem" color="grey.500">
+                        Ficará 10 dias fora do trabalho
+                    </Typography>
+                </DefaultCard>
+                <DefaultCard
+                    width={{
+                        xs: 'calc(100vw - 2rem)',
+                        md: '300px',
+                        lg: '100%',
+                    }}
+                >
                     <Box display="flex" alignItems="center" gap="5px">
                         <AdjustOutlinedIcon
                             color="primary"

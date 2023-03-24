@@ -1,14 +1,12 @@
-import ThemeProvider from '@mui/material/styles/ThemeProvider'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App'
+import '@tremor/react/dist/esm/tremor.css'
+import 'kalend/dist/styles/index.css'
 import './index.css'
-import theme from './theme'
+import App from './App'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>
-        <ThemeProvider theme={theme}>
-            <App />
-        </ThemeProvider>
+        <App />
     </React.StrictMode>
 )

@@ -7,7 +7,13 @@ const CardCalendario = () => {
     return (
         <Box>
             <DefaultTitle>Eventos Futuros</DefaultTitle>
-            <DefaultCard>
+            <DefaultCard
+                width={{
+                    xs: 'calc(100vw - 2rem)',
+                    md: '300px',
+                    lg: '100%',
+                }}
+            >
                 <Box height={600}>
                     <Kalend
                         events={[]}

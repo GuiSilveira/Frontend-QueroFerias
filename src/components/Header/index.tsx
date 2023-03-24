@@ -16,6 +16,9 @@ import {
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import AccountCircle from '@mui/icons-material/AccountCircle'
+import GroupsIcon from '@mui/icons-material/Groups'
+import DashboardIcon from '@mui/icons-material/Dashboard'
+import PendingActionsIcon from '@mui/icons-material/PendingActions'
 import NotificationsIcon from '@mui/icons-material/Notifications'
 import EventAvailableIcon from '@mui/icons-material/EventAvailable'
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
@@ -25,6 +28,7 @@ import { useTheme } from '@mui/material/styles'
 import { useState } from 'react'
 import Drawer from '@mui/material/Drawer'
 import Logo from '../../assets/logo.svg'
+import { Form, Link } from 'react-router-dom'
 
 const drawerWidth = 240
 
@@ -58,17 +62,29 @@ const Header = () => {
                     sx={{
                         color: `${theme.palette.common.white}`,
                         display: 'flex',
-                        justifyContent: 'space-between',
+                        justifyContent: {
+                            xs: 'space-between',
+                            md: 'flex-end',
+                        },
                     }}
                 >
-                    <Box
-                        component="img"
-                        src={Logo}
-                        display={{
-                            xs: 'none',
-                            md: 'block',
+                    <Link
+                        to={'/home'}
+                        style={{
+                            position: 'absolute',
+                            left: '0',
+                            marginLeft: '24px',
                         }}
-                    />
+                    >
+                        <Box
+                            component="img"
+                            src={Logo}
+                            display={{
+                                xs: 'none',
+                                md: 'block',
+                            }}
+                        />
+                    </Link>
                     <IconButton
                         sx={{
                             display: {
@@ -113,9 +129,17 @@ const Header = () => {
                                 </Typography>
                             </MenuItem>
                         </Menu>
-                        <IconButton size="small" color="inherit">
-                            <AccountCircle />
-                        </IconButton>
+                        <Link
+                            to={'/home/profile'}
+                            style={{
+                                textDecoration: 'none',
+                                color: `${theme.palette.common.white}`,
+                            }}
+                        >
+                            <IconButton size="small" color="inherit">
+                                <AccountCircle />
+                            </IconButton>
+                        </Link>
                     </Box>
                 </Toolbar>
             </AppBar>
@@ -145,38 +169,129 @@ const Header = () => {
                                 flexDirection: 'column',
                             }}
                         >
-                            {[
-                                'Solicitar férias e 13º',
-                                'Todas as solicitações',
-                            ].map((text, index) => (
-                                <ListItem key={text} disablePadding>
+                            <ListItem
+                                key={'Solicitar férias e 13º'}
+                                disablePadding
+                            >
+                                <Link
+                                    to={'/home/solicitar'}
+                                    style={{
+                                        textDecoration: 'none',
+                                        color: 'inherit',
+                                        width: '100%',
+                                    }}
+                                >
                                     <ListItemButton>
                                         <ListItemIcon>
-                                            {index % 2 === 0 ? (
-                                                <CalendarMonthIcon />
-                                            ) : (
-                                                <EventAvailableIcon />
-                                            )}
+                                            <CalendarMonthIcon />
                                         </ListItemIcon>
-                                        <ListItemText primary={text} />
+                                        <ListItemText
+                                            primary={'Solicitar férias e 13º'}
+                                        />
                                     </ListItemButton>
-                                </ListItem>
-                            ))}
+                                </Link>
+                            </ListItem>
+                            <ListItem
+                                key={'Todas as solicitações'}
+                                disablePadding
+                            >
+                                <Link
+                                    to={'/home/solicitacoes'}
+                                    style={{
+                                        textDecoration: 'none',
+                                        color: 'inherit',
+                                        width: '100%',
+                                    }}
+                                >
+                                    <ListItemButton>
+                                        <ListItemIcon>
+                                            <EventAvailableIcon />
+                                        </ListItemIcon>
+                                        <ListItemText
+                                            primary={'Todas as solicitações'}
+                                        />
+                                    </ListItemButton>
+                                </Link>
+                            </ListItem>
+                            <ListItem key={'Seu Dashboard'} disablePadding>
+                                <Link
+                                    to={'/home/gestor/dashboard'}
+                                    style={{
+                                        textDecoration: 'none',
+                                        color: 'inherit',
+                                        width: '100%',
+                                    }}
+                                >
+                                    <ListItemButton>
+                                        <ListItemIcon>
+                                            <DashboardIcon />
+                                        </ListItemIcon>
+                                        <ListItemText
+                                            primary={'Seu Dashboard'}
+                                        />
+                                    </ListItemButton>
+                                </Link>
+                            </ListItem>
+                            <ListItem
+                                key={'Solicitações dos Funcionários'}
+                                disablePadding
+                            >
+                                <Link
+                                    to={'/home/gestor/solicitacoes'}
+                                    style={{
+                                        textDecoration: 'none',
+                                        color: 'inherit',
+                                        width: '100%',
+                                    }}
+                                >
+                                    <ListItemButton>
+                                        <ListItemIcon>
+                                            <PendingActionsIcon />
+                                        </ListItemIcon>
+                                        <ListItemText
+                                            primary={
+                                                'Solicitações dos Funcionários'
+                                            }
+                                        />
+                                    </ListItemButton>
+                                </Link>
+                            </ListItem>
+                            <ListItem key={'Sua Equipe'} disablePadding>
+                                <Link
+                                    to={'/home/gestor/time'}
+                                    style={{
+                                        textDecoration: 'none',
+                                        color: 'inherit',
+                                        width: '100%',
+                                    }}
+                                >
+                                    <ListItemButton>
+                                        <ListItemIcon>
+                                            <GroupsIcon />
+                                        </ListItemIcon>
+                                        <ListItemText primary={'Sua Equipe'} />
+                                    </ListItemButton>
+                                </Link>
+                            </ListItem>
                         </List>
                     </Box>
                 </div>
-                <Button
-                    variant="text"
-                    startIcon={<LogoutIcon />}
-                    color="inherit"
-                    sx={{
-                        justifyContent: 'flex-start',
-                        padding: '0.5rem 1.5rem',
-                        gap: '1rem',
-                    }}
-                >
-                    Sair
-                </Button>
+                <Form action="/logout" method="post">
+                    <Button
+                        variant="text"
+                        startIcon={<LogoutIcon />}
+                        color="inherit"
+                        sx={{
+                            justifyContent: 'flex-start',
+                            padding: '0.5rem 1.5rem',
+                            gap: '1rem',
+                            width: '100%',
+                        }}
+                        type="submit"
+                    >
+                        Sair
+                    </Button>
+                </Form>
             </Drawer>
             <Drawer
                 anchor="left"
@@ -207,38 +322,129 @@ const Header = () => {
                                 flexDirection: 'column',
                             }}
                         >
-                            {[
-                                'Solicitar férias e 13º',
-                                'Todas as solicitações',
-                            ].map((text, index) => (
-                                <ListItem key={text} disablePadding>
+                            <ListItem
+                                key={'Solicitar férias e 13º'}
+                                disablePadding
+                            >
+                                <Link
+                                    to={'/home/solicitar'}
+                                    style={{
+                                        textDecoration: 'none',
+                                        color: 'inherit',
+                                        width: '100%',
+                                    }}
+                                >
                                     <ListItemButton>
                                         <ListItemIcon>
-                                            {index % 2 === 0 ? (
-                                                <CalendarMonthIcon />
-                                            ) : (
-                                                <EventAvailableIcon />
-                                            )}
+                                            <CalendarMonthIcon />
                                         </ListItemIcon>
-                                        <ListItemText primary={text} />
+                                        <ListItemText
+                                            primary={'Solicitar férias e 13º'}
+                                        />
                                     </ListItemButton>
-                                </ListItem>
-                            ))}
+                                </Link>
+                            </ListItem>
+                            <ListItem
+                                key={'Todas as solicitações'}
+                                disablePadding
+                            >
+                                <Link
+                                    to={'/home/solicitacoes'}
+                                    style={{
+                                        textDecoration: 'none',
+                                        color: 'inherit',
+                                        width: '100%',
+                                    }}
+                                >
+                                    <ListItemButton>
+                                        <ListItemIcon>
+                                            <EventAvailableIcon />
+                                        </ListItemIcon>
+                                        <ListItemText
+                                            primary={'Todas as solicitações'}
+                                        />
+                                    </ListItemButton>
+                                </Link>
+                            </ListItem>
+                            <ListItem key={'Seu Dashboard'} disablePadding>
+                                <Link
+                                    to={'/home/gestor/dashboard'}
+                                    style={{
+                                        textDecoration: 'none',
+                                        color: 'inherit',
+                                        width: '100%',
+                                    }}
+                                >
+                                    <ListItemButton>
+                                        <ListItemIcon>
+                                            <DashboardIcon />
+                                        </ListItemIcon>
+                                        <ListItemText
+                                            primary={'Seu Dashboard'}
+                                        />
+                                    </ListItemButton>
+                                </Link>
+                            </ListItem>
+                            <ListItem
+                                key={'Solicitações dos Funcionários'}
+                                disablePadding
+                            >
+                                <Link
+                                    to={'/home/gestor/solicitacoes'}
+                                    style={{
+                                        textDecoration: 'none',
+                                        color: 'inherit',
+                                        width: '100%',
+                                    }}
+                                >
+                                    <ListItemButton>
+                                        <ListItemIcon>
+                                            <PendingActionsIcon />
+                                        </ListItemIcon>
+                                        <ListItemText
+                                            primary={
+                                                'Solicitações dos Funcionários'
+                                            }
+                                        />
+                                    </ListItemButton>
+                                </Link>
+                            </ListItem>
+                            <ListItem key={'Sua Equipe'} disablePadding>
+                                <Link
+                                    to={'/home/gestor/time'}
+                                    style={{
+                                        textDecoration: 'none',
+                                        color: 'inherit',
+                                        width: '100%',
+                                    }}
+                                >
+                                    <ListItemButton>
+                                        <ListItemIcon>
+                                            <GroupsIcon />
+                                        </ListItemIcon>
+                                        <ListItemText primary={'Sua Equipe'} />
+                                    </ListItemButton>
+                                </Link>
+                            </ListItem>
                         </List>
                     </Box>
                 </div>
-                <Button
-                    variant="text"
-                    startIcon={<LogoutIcon />}
-                    color="inherit"
-                    sx={{
-                        justifyContent: 'flex-start',
-                        padding: '0.5rem 1.5rem',
-                        gap: '1rem',
-                    }}
-                >
-                    Sair
-                </Button>
+                <Form action="/logout" method="post">
+                    <Button
+                        variant="text"
+                        startIcon={<LogoutIcon />}
+                        color="inherit"
+                        type="submit"
+                        sx={{
+                            justifyContent: 'flex-start',
+                            padding: '0.5rem 1.5rem',
+                            gap: '1rem',
+                            width: '100%',
+                        }}
+                    >
+                        Sair
+                    </Button>
+                </Form>
             </Drawer>
         </Box>
     )

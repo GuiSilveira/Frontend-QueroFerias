@@ -9,6 +9,8 @@ type PropTypes = {
     type: string
     multiline?: boolean
     marginBottom?: string | object
+    setChange?: React.Dispatch<React.SetStateAction<string>>
+    name: string
 }
 
 const DefaultInput = ({
@@ -19,9 +21,12 @@ const DefaultInput = ({
     type,
     multiline,
     marginBottom,
+    setChange,
+    name,
 }: PropTypes) => {
     return (
         <TextField
+            name={name}
             label={label}
             InputLabelProps={{ shrink: true }}
             placeholder={placeholder}
@@ -47,6 +52,9 @@ const DefaultInput = ({
                 ) : (
                     ''
                 ),
+            }}
+            onChange={(e) => {
+                setChange?.(e.target.value)
             }}
         />
     )

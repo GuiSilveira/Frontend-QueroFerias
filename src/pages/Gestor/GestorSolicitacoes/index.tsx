@@ -10,7 +10,6 @@ import CardBoldTitle from '../../../components/CardBoldTitle'
 import DefaultCard from '../../../components/DefaultCard'
 import DefaultFilter from '../../../components/DefaultFilter'
 import DefaultTitle from '../../../components/DefaultTitle'
-import Header from '../../../components/Header'
 import CardBoldTitleWithStatus from '../../../components/CardBoldTitleWithStatus'
 import CustomButton from '../../../components/CustomButton'
 import { useState } from 'react'
@@ -28,11 +27,28 @@ const GestorSolicitacoes = () => {
 
     return (
         <Box>
-            <Header />
             <Container
                 sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: {
+                        xs: 'center',
+                        md: 'flex-start',
+                    },
+                    alignItems: {
+                        xs: 'center',
+                        md: 'flex-start',
+                    },
                     marginTop: '71px',
-                    marginBottom: '30px',
+                    marginLeft: {
+                        md: '240px',
+                    },
+                    maxWidth: {
+                        md: 'calc(100% - 240px)',
+                    },
+                    padding: {
+                        md: '0 0 0 1rem',
+                    },
                 }}
             >
                 <DefaultTitle>Solicitações</DefaultTitle>
@@ -54,7 +70,7 @@ const GestorSolicitacoes = () => {
                                 width: '100%',
                             }}
                         >
-                            <DefaultCard>
+                            <DefaultCard width={'100%'}>
                                 <Stack
                                     flexDirection="column"
                                     justifyContent="space-between"
