@@ -148,6 +148,7 @@ const Profile = () => {
                                             }
                                             type={'password'}
                                             marginBottom="1rem"
+                                            name="password"
                                         />
                                     </DefaultModal>
                                 </Stack>

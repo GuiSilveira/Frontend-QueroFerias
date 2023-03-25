@@ -28,11 +28,13 @@ import { useTheme } from '@mui/material/styles'
 import { useState } from 'react'
 import Drawer from '@mui/material/Drawer'
 import Logo from '../../assets/logo.svg'
-import { Form, Link } from 'react-router-dom'
+import { Form, Link, useLoaderData } from 'react-router-dom'
+import { UserLoaderDataType } from '../../types/types'
 
 const drawerWidth = 240
 
 const Header = () => {
+    const { position } = useLoaderData() as UserLoaderDataType
     const theme = useTheme()
     const [anchorElNotification, setAnchorElNotification] =
         useState<null | HTMLElement>(null)
@@ -169,110 +171,154 @@ const Header = () => {
                                 flexDirection: 'column',
                             }}
                         >
-                            <ListItem
-                                key={'Solicitar férias e 13º'}
-                                disablePadding
-                            >
-                                <Link
-                                    to={'/home/solicitar'}
-                                    style={{
-                                        textDecoration: 'none',
-                                        color: 'inherit',
-                                        width: '100%',
-                                    }}
+                            {position !== 'Admin' && (
+                                <>
+                                    <ListItem
+                                        key={'Solicitar férias e 13º'}
+                                        disablePadding
+                                    >
+                                        <Link
+                                            to={'/home/solicitar'}
+                                            style={{
+                                                textDecoration: 'none',
+                                                color: 'inherit',
+                                                width: '100%',
+                                            }}
+                                        >
+                                            <ListItemButton>
+                                                <ListItemIcon>
+                                                    <CalendarMonthIcon />
+                                                </ListItemIcon>
+                                                <ListItemText
+                                                    primary={
+                                                        'Solicitar férias e 13º'
+                                                    }
+                                                />
+                                            </ListItemButton>
+                                        </Link>
+                                    </ListItem>
+                                    <ListItem
+                                        key={'Todas as solicitações'}
+                                        disablePadding
+                                    >
+                                        <Link
+                                            to={'/home/solicitacoes'}
+                                            style={{
+                                                textDecoration: 'none',
+                                                color: 'inherit',
+                                                width: '100%',
+                                            }}
+                                        >
+                                            <ListItemButton>
+                                                <ListItemIcon>
+                                                    <EventAvailableIcon />
+                                                </ListItemIcon>
+                                                <ListItemText
+                                                    primary={
+                                                        'Todas as solicitações'
+                                                    }
+                                                />
+                                            </ListItemButton>
+                                        </Link>
+                                    </ListItem>
+                                </>
+                            )}
+
+                            {position === 'Manager' && (
+                                <>
+                                    <ListItem
+                                        key={'Seu Dashboard'}
+                                        disablePadding
+                                    >
+                                        <Link
+                                            to={'/home/gestor/dashboard'}
+                                            style={{
+                                                textDecoration: 'none',
+                                                color: 'inherit',
+                                                width: '100%',
+                                            }}
+                                        >
+                                            <ListItemButton>
+                                                <ListItemIcon>
+                                                    <DashboardIcon />
+                                                </ListItemIcon>
+                                                <ListItemText
+                                                    primary={'Seu Dashboard'}
+                                                />
+                                            </ListItemButton>
+                                        </Link>
+                                    </ListItem>
+                                    <ListItem
+                                        key={'Solicitações dos Funcionários'}
+                                        disablePadding
+                                    >
+                                        <Link
+                                            to={'/home/gestor/solicitacoes'}
+                                            style={{
+                                                textDecoration: 'none',
+                                                color: 'inherit',
+                                                width: '100%',
+                                            }}
+                                        >
+                                            <ListItemButton>
+                                                <ListItemIcon>
+                                                    <PendingActionsIcon />
+                                                </ListItemIcon>
+                                                <ListItemText
+                                                    primary={
+                                                        'Solicitações dos Funcionários'
+                                                    }
+                                                />
+                                            </ListItemButton>
+                                        </Link>
+                                    </ListItem>
+                                    <ListItem key={'Sua Equipe'} disablePadding>
+                                        <Link
+                                            to={'/home/gestor/time'}
+                                            style={{
+                                                textDecoration: 'none',
+                                                color: 'inherit',
+                                                width: '100%',
+                                            }}
+                                        >
+                                            <ListItemButton>
+                                                <ListItemIcon>
+                                                    <GroupsIcon />
+                                                </ListItemIcon>
+                                                <ListItemText
+                                                    primary={'Sua Equipe'}
+                                                />
+                                            </ListItemButton>
+                                        </Link>
+                                    </ListItem>
+                                </>
+                            )}
+                            {position === 'Admin' && (
+                                <ListItem
+                                    key={'Registrar Funcionários'}
+                                    disablePadding
                                 >
-                                    <ListItemButton>
-                                        <ListItemIcon>
-                                            <CalendarMonthIcon />
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            primary={'Solicitar férias e 13º'}
-                                        />
-                                    </ListItemButton>
-                                </Link>
-                            </ListItem>
-                            <ListItem
-                                key={'Todas as solicitações'}
-                                disablePadding
-                            >
-                                <Link
-                                    to={'/home/solicitacoes'}
-                                    style={{
-                                        textDecoration: 'none',
-                                        color: 'inherit',
-                                        width: '100%',
-                                    }}
-                                >
-                                    <ListItemButton>
-                                        <ListItemIcon>
-                                            <EventAvailableIcon />
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            primary={'Todas as solicitações'}
-                                        />
-                                    </ListItemButton>
-                                </Link>
-                            </ListItem>
-                            <ListItem key={'Seu Dashboard'} disablePadding>
-                                <Link
-                                    to={'/home/gestor/dashboard'}
-                                    style={{
-                                        textDecoration: 'none',
-                                        color: 'inherit',
-                                        width: '100%',
-                                    }}
-                                >
-                                    <ListItemButton>
-                                        <ListItemIcon>
-                                            <DashboardIcon />
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            primary={'Seu Dashboard'}
-                                        />
-                                    </ListItemButton>
-                                </Link>
-                            </ListItem>
-                            <ListItem
-                                key={'Solicitações dos Funcionários'}
-                                disablePadding
-                            >
-                                <Link
-                                    to={'/home/gestor/solicitacoes'}
-                                    style={{
-                                        textDecoration: 'none',
-                                        color: 'inherit',
-                                        width: '100%',
-                                    }}
-                                >
-                                    <ListItemButton>
-                                        <ListItemIcon>
-                                            <PendingActionsIcon />
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            primary={
-                                                'Solicitações dos Funcionários'
-                                            }
-                                        />
-                                    </ListItemButton>
-                                </Link>
-                            </ListItem>
-                            <ListItem key={'Sua Equipe'} disablePadding>
-                                <Link
-                                    to={'/home/gestor/time'}
-                                    style={{
-                                        textDecoration: 'none',
-                                        color: 'inherit',
-                                        width: '100%',
-                                    }}
-                                >
-                                    <ListItemButton>
-                                        <ListItemIcon>
-                                            <GroupsIcon />
-                                        </ListItemIcon>
-                                        <ListItemText primary={'Sua Equipe'} />
-                                    </ListItemButton>
-                                </Link>
-                            </ListItem>
+                                    <Link
+                                        to={'/home/register'}
+                                        style={{
+                                            textDecoration: 'none',
+                                            color: 'inherit',
+                                            width: '100%',
+                                        }}
+                                    >
+                                        <ListItemButton>
+                                            <ListItemIcon>
+                                                <GroupsIcon />
+                                            </ListItemIcon>
+                                            <ListItemText
+                                                primary={
+                                                    'Registrar Funcionários'
+                                                }
+                                            />
+                                        </ListItemButton>
+                                    </Link>
+                                </ListItem>
+                            )}
                         </List>
                     </Box>
                 </div>
@@ -322,110 +368,153 @@ const Header = () => {
                                 flexDirection: 'column',
                             }}
                         >
-                            <ListItem
-                                key={'Solicitar férias e 13º'}
-                                disablePadding
-                            >
-                                <Link
-                                    to={'/home/solicitar'}
-                                    style={{
-                                        textDecoration: 'none',
-                                        color: 'inherit',
-                                        width: '100%',
-                                    }}
+                            {position !== 'Admin' && (
+                                <>
+                                    <ListItem
+                                        key={'Solicitar férias e 13º'}
+                                        disablePadding
+                                    >
+                                        <Link
+                                            to={'/home/solicitar'}
+                                            style={{
+                                                textDecoration: 'none',
+                                                color: 'inherit',
+                                                width: '100%',
+                                            }}
+                                        >
+                                            <ListItemButton>
+                                                <ListItemIcon>
+                                                    <CalendarMonthIcon />
+                                                </ListItemIcon>
+                                                <ListItemText
+                                                    primary={
+                                                        'Solicitar férias e 13º'
+                                                    }
+                                                />
+                                            </ListItemButton>
+                                        </Link>
+                                    </ListItem>
+                                    <ListItem
+                                        key={'Todas as solicitações'}
+                                        disablePadding
+                                    >
+                                        <Link
+                                            to={'/home/solicitacoes'}
+                                            style={{
+                                                textDecoration: 'none',
+                                                color: 'inherit',
+                                                width: '100%',
+                                            }}
+                                        >
+                                            <ListItemButton>
+                                                <ListItemIcon>
+                                                    <EventAvailableIcon />
+                                                </ListItemIcon>
+                                                <ListItemText
+                                                    primary={
+                                                        'Todas as solicitações'
+                                                    }
+                                                />
+                                            </ListItemButton>
+                                        </Link>
+                                    </ListItem>
+                                </>
+                            )}
+                            {position === 'Manager' && (
+                                <>
+                                    <ListItem
+                                        key={'Seu Dashboard'}
+                                        disablePadding
+                                    >
+                                        <Link
+                                            to={'/home/gestor/dashboard'}
+                                            style={{
+                                                textDecoration: 'none',
+                                                color: 'inherit',
+                                                width: '100%',
+                                            }}
+                                        >
+                                            <ListItemButton>
+                                                <ListItemIcon>
+                                                    <DashboardIcon />
+                                                </ListItemIcon>
+                                                <ListItemText
+                                                    primary={'Seu Dashboard'}
+                                                />
+                                            </ListItemButton>
+                                        </Link>
+                                    </ListItem>
+                                    <ListItem
+                                        key={'Solicitações dos Funcionários'}
+                                        disablePadding
+                                    >
+                                        <Link
+                                            to={'/home/gestor/solicitacoes'}
+                                            style={{
+                                                textDecoration: 'none',
+                                                color: 'inherit',
+                                                width: '100%',
+                                            }}
+                                        >
+                                            <ListItemButton>
+                                                <ListItemIcon>
+                                                    <PendingActionsIcon />
+                                                </ListItemIcon>
+                                                <ListItemText
+                                                    primary={
+                                                        'Solicitações dos Funcionários'
+                                                    }
+                                                />
+                                            </ListItemButton>
+                                        </Link>
+                                    </ListItem>
+                                    <ListItem key={'Sua Equipe'} disablePadding>
+                                        <Link
+                                            to={'/home/gestor/time'}
+                                            style={{
+                                                textDecoration: 'none',
+                                                color: 'inherit',
+                                                width: '100%',
+                                            }}
+                                        >
+                                            <ListItemButton>
+                                                <ListItemIcon>
+                                                    <GroupsIcon />
+                                                </ListItemIcon>
+                                                <ListItemText
+                                                    primary={'Sua Equipe'}
+                                                />
+                                            </ListItemButton>
+                                        </Link>
+                                    </ListItem>
+                                </>
+                            )}
+                            {position === 'Admin' && (
+                                <ListItem
+                                    key={'Registrar Funcionários'}
+                                    disablePadding
                                 >
-                                    <ListItemButton>
-                                        <ListItemIcon>
-                                            <CalendarMonthIcon />
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            primary={'Solicitar férias e 13º'}
-                                        />
-                                    </ListItemButton>
-                                </Link>
-                            </ListItem>
-                            <ListItem
-                                key={'Todas as solicitações'}
-                                disablePadding
-                            >
-                                <Link
-                                    to={'/home/solicitacoes'}
-                                    style={{
-                                        textDecoration: 'none',
-                                        color: 'inherit',
-                                        width: '100%',
-                                    }}
-                                >
-                                    <ListItemButton>
-                                        <ListItemIcon>
-                                            <EventAvailableIcon />
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            primary={'Todas as solicitações'}
-                                        />
-                                    </ListItemButton>
-                                </Link>
-                            </ListItem>
-                            <ListItem key={'Seu Dashboard'} disablePadding>
-                                <Link
-                                    to={'/home/gestor/dashboard'}
-                                    style={{
-                                        textDecoration: 'none',
-                                        color: 'inherit',
-                                        width: '100%',
-                                    }}
-                                >
-                                    <ListItemButton>
-                                        <ListItemIcon>
-                                            <DashboardIcon />
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            primary={'Seu Dashboard'}
-                                        />
-                                    </ListItemButton>
-                                </Link>
-                            </ListItem>
-                            <ListItem
-                                key={'Solicitações dos Funcionários'}
-                                disablePadding
-                            >
-                                <Link
-                                    to={'/home/gestor/solicitacoes'}
-                                    style={{
-                                        textDecoration: 'none',
-                                        color: 'inherit',
-                                        width: '100%',
-                                    }}
-                                >
-                                    <ListItemButton>
-                                        <ListItemIcon>
-                                            <PendingActionsIcon />
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            primary={
-                                                'Solicitações dos Funcionários'
-                                            }
-                                        />
-                                    </ListItemButton>
-                                </Link>
-                            </ListItem>
-                            <ListItem key={'Sua Equipe'} disablePadding>
-                                <Link
-                                    to={'/home/gestor/time'}
-                                    style={{
-                                        textDecoration: 'none',
-                                        color: 'inherit',
-                                        width: '100%',
-                                    }}
-                                >
-                                    <ListItemButton>
-                                        <ListItemIcon>
-                                            <GroupsIcon />
-                                        </ListItemIcon>
-                                        <ListItemText primary={'Sua Equipe'} />
-                                    </ListItemButton>
-                                </Link>
-                            </ListItem>
+                                    <Link
+                                        to={'/home/register'}
+                                        style={{
+                                            textDecoration: 'none',
+                                            color: 'inherit',
+                                            width: '100%',
+                                        }}
+                                    >
+                                        <ListItemButton>
+                                            <ListItemIcon>
+                                                <GroupsIcon />
+                                            </ListItemIcon>
+                                            <ListItemText
+                                                primary={
+                                                    'Registrar Funcionários'
+                                                }
+                                            />
+                                        </ListItemButton>
+                                    </Link>
+                                </ListItem>
+                            )}
                         </List>
                     </Box>
                 </div>

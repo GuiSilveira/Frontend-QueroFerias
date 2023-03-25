@@ -1,8 +1,13 @@
 import { TextField } from '@mui/material'
 
-const DefaultTextArea = () => {
+type PropTypes = {
+    name: string
+}
+
+const DefaultTextArea = ({ name }: PropTypes) => {
     return (
         <TextField
+            name={name}
             label="Mensagem"
             placeholder="Digite aqui a sua mensagem..."
             multiline

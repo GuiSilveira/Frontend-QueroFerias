@@ -18,9 +18,32 @@ export async function checkAuthLoader() {
         return redirect('/')
     }
 
-    const tokenData = await api.post('/auth/verify', null, {
+    const { data } = await api.post('/auth/verify', null, {
         headers: { Authorization: token },
     })
 
-    return tokenData
+    return data
+}
+
+export async function checkRoleLoader(
+    ...positions: ('Admin' | 'Employee' | 'Manager')[]
+) {
+    const tokenData = await checkAuthLoader()
+    let hasRole = false
+
+    positions.forEach((position) => {
+        if (
+            position !== 'Admin' &&
+            position !== 'Employee' &&
+            position !== 'Manager'
+        ) {
+            throw new Error('Invalid role')
+        }
+
+        if (tokenData.position === position) {
+            hasRole = true
+        }
+    })
+
+    return !hasRole ? redirect('/home') : null
 }

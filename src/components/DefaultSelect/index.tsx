@@ -1,13 +1,29 @@
-import { Select, FormControl, InputLabel } from '@mui/material'
+import {
+    Select,
+    FormControl,
+    InputLabel,
+    SelectChangeEvent,
+} from '@mui/material'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import { ReactNode } from 'react'
 
 type PropTypes = {
     label: string
     labelId: string
-    options: React.ReactNode[]
+    children: JSX.Element[] | JSX.Element
+    name: string
+    value: string
+    onChange: (event: SelectChangeEvent<string>, child: ReactNode) => void
 }
 
-const DefaultSelect = ({ label, labelId, options }: PropTypes) => {
+const DefaultSelect = ({
+    label,
+    labelId,
+    children,
+    name,
+    value,
+    onChange,
+}: PropTypes) => {
     return (
         <FormControl fullWidth>
             <InputLabel
@@ -22,11 +38,14 @@ const DefaultSelect = ({ label, labelId, options }: PropTypes) => {
                 labelId={labelId}
                 label={label}
                 IconComponent={KeyboardArrowDownIcon}
+                name={name}
+                value={value}
+                onChange={onChange}
                 sx={{
                     marginTop: '20px',
                 }}
             >
-                {...options}
+                {children}
             </Select>
         </FormControl>
     )

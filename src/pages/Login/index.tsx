@@ -1,5 +1,5 @@
 import { Box, Typography, useMediaQuery } from '@mui/material'
-import { useState, useContext } from 'react'
+import { useState } from 'react'
 import DefaultButton from '../../components/DefaultButton'
 import DefaultInput from '../../components/DefaultInput'
 import Logo from '../../assets/logo.svg'
@@ -79,18 +79,23 @@ const Login = () => {
 export default Login
 
 export async function loginAction({ request }: ActionFunctionArgs) {
-    const data = await request.formData()
-    const authData = {
-        credential: data.get('matricula'),
-        password: data.get('password'),
+    try {
+        const data = await request.formData()
+        const authData = {
+            credential: data.get('matricula'),
+            password: data.get('password'),
+        }
+
+        const response = await api.post('/auth/login', authData)
+
+        const { accessToken } = response.data
+
+        // TODO: Tratar erro caso o status code seja diferente de 200
+
+        localStorage.setItem('token', accessToken)
+
+        return redirect('/home')
+    } catch (error) {
+        return null
     }
-
-    const response = await api.post('/auth/login', authData)
-    const { accessToken } = response.data
-
-    // TODO: Tratar erro caso o status code seja diferente de 200
-
-    localStorage.setItem('token', accessToken)
-
-    return redirect('/home')
 }

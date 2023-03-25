@@ -2,9 +2,10 @@ import { Box } from '@mui/material'
 
 type PropType = {
     children: JSX.Element[] | JSX.Element
+    marginTop?: string
 }
 
-const DefaultContainer = ({ children }: PropType) => {
+const DefaultContainer = ({ children, marginTop }: PropType) => {
     return (
         <Box
             sx={{
@@ -31,6 +32,7 @@ const DefaultContainer = ({ children }: PropType) => {
                 maxWidth: {
                     sm: '500px',
                 },
+                marginTop: marginTop ? marginTop : '0',
             }}
         >
             {children}
