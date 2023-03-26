@@ -1,22 +1,40 @@
-import { Box, Container, MenuItem } from '@mui/material'
+import { Box, Container, List, ListItem, MenuItem } from '@mui/material'
 import { DateField } from '@mui/x-date-pickers'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ActionFunctionArgs, Form, useRouteLoaderData } from 'react-router-dom'
 import DefaultButton from '../../../components/DefaultButton'
 import DefaultCard from '../../../components/DefaultCard'
 import DefaultSelect from '../../../components/DefaultSelect'
 import DefaultTextArea from '../../../components/DefaultTextArea'
 import DefaultTitle from '../../../components/DefaultTitle'
+import api from '../../../services/api'
 import { UserLoaderDataType } from '../../../types/types'
+import { getAuthToken } from '../../../util/auth'
 
 const FuncionarioSolicitarFerias = () => {
     const { manager, contract } = useRouteLoaderData(
         'rootHome'
     ) as UserLoaderDataType
+    const token = getAuthToken()
     const [diasFerias, setDiasFerias] = useState<string>('')
     const [antecipateSalary, setAntecipateSalary] = useState<string>('')
     const [startDate, setStartDate] = useState<Date | null>()
     const [endDate, setEndDate] = useState<Date | null>()
+    const [managers, setManagers] = useState<any>([])
+
+    useEffect(() => {
+        if (!manager) {
+            ;(async () => {
+                const response = await api.get('/employees/managers', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                })
+
+                setManagers(response.data)
+            })()
+        }
+    }, [])
 
     return (
         <Container
@@ -52,7 +70,7 @@ const FuncionarioSolicitarFerias = () => {
                 >
                     {manager
                         ? 'Solicitar Férias'
-                        : 'Ops, parece que você não tem gerente associado a sua conta. Fale com o seu gerente para entrar no time dele!'}
+                        : 'Ops, parece que você não tem gerente associado a sua conta. Selecione o seu gerente na lista abaixo:'}
                 </DefaultTitle>
                 {manager ? (
                     <>
@@ -133,7 +151,11 @@ const FuncionarioSolicitarFerias = () => {
                         </DefaultCard>
                     </>
                 ) : (
-                    <></>
+                    <List>
+                        {managers.map((manager: any) => (
+                            <ListItem key={manager.id}>{manager.name}</ListItem>
+                        ))}
+                    </List>
                 )}
             </Box>
         </Container>
