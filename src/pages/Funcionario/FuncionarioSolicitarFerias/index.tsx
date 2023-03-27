@@ -1,5 +1,6 @@
 import { Box, Container, List, ListItem, MenuItem } from '@mui/material'
 import { DateField } from '@mui/x-date-pickers'
+import dayjs from 'dayjs'
 import { useState, useEffect } from 'react'
 import { ActionFunctionArgs, Form, useRouteLoaderData } from 'react-router-dom'
 import DefaultButton from '../../../components/DefaultButton'
@@ -7,19 +8,19 @@ import DefaultCard from '../../../components/DefaultCard'
 import DefaultSelect from '../../../components/DefaultSelect'
 import DefaultTextArea from '../../../components/DefaultTextArea'
 import DefaultTitle from '../../../components/DefaultTitle'
+import SearchBar from '../../../components/SearchBar'
 import api from '../../../services/api'
 import { UserLoaderDataType } from '../../../types/types'
 import { getAuthToken } from '../../../util/auth'
 
 const FuncionarioSolicitarFerias = () => {
-    const { manager, contract } = useRouteLoaderData(
+    const { id, manager, contract } = useRouteLoaderData(
         'rootHome'
     ) as UserLoaderDataType
     const token = getAuthToken()
     const [diasFerias, setDiasFerias] = useState<string>('')
     const [antecipateSalary, setAntecipateSalary] = useState<string>('')
-    const [startDate, setStartDate] = useState<Date | null>()
-    const [endDate, setEndDate] = useState<Date | null>()
+    const [startDate, setStartDate] = useState<any>()
     const [managers, setManagers] = useState<any>([])
 
     useEffect(() => {
@@ -35,6 +36,8 @@ const FuncionarioSolicitarFerias = () => {
             })()
         }
     }, [])
+
+    console.log(startDate)
 
     return (
         <Container
@@ -86,7 +89,7 @@ const FuncionarioSolicitarFerias = () => {
                         >
                             <Form method="post">
                                 <DefaultSelect
-                                    value={diasFerias}
+                                    value={String(diasFerias)}
                                     onChange={(event) =>
                                         setDiasFerias(event.target.value)
                                     }
@@ -108,17 +111,21 @@ const FuncionarioSolicitarFerias = () => {
                                     }
                                     name="start"
                                     label="Data de Início"
+                                    format="DD/MM/YYYY"
                                     sx={{
+                                        width: '100%',
                                         margin: '20px 0',
                                     }}
                                 />
                                 <DateField
-                                    value={endDate}
-                                    onChange={(newValue) =>
-                                        setEndDate(newValue)
-                                    }
+                                    value={startDate}
                                     name="end"
                                     label="Data de Término"
+                                    format="DD/MM/YYYY"
+                                    readOnly
+                                    sx={{
+                                        width: '100%',
+                                    }}
                                 />
                                 {contract === 'CLT' ? (
                                     <DefaultSelect
@@ -151,11 +158,7 @@ const FuncionarioSolicitarFerias = () => {
                         </DefaultCard>
                     </>
                 ) : (
-                    <List>
-                        {managers.map((manager: any) => (
-                            <ListItem key={manager.id}>{manager.name}</ListItem>
-                        ))}
-                    </List>
+                    <SearchBar data={managers} idEmployee={id} token={token} />
                 )}
             </Box>
         </Container>
@@ -166,6 +169,8 @@ export default FuncionarioSolicitarFerias
 
 export async function createScheduleAction({ request }: ActionFunctionArgs) {
     const data = await request.formData()
+
+    console.log(data.get('start'))
 
     // TODO: Verificação da data de início e fim
     // TODO: Deixar o fim readonly e atualizar conforme os dias solicitados e o início
