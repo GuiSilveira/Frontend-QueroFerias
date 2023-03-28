@@ -22,7 +22,18 @@ export async function checkAuthLoader() {
         headers: { Authorization: token },
     })
 
-    return data
+    if (!data) {
+        return redirect('/')
+    }
+
+    const userData = {
+        id: data.id,
+        contract: data.contract,
+    }
+
+    localStorage.setItem('user', JSON.stringify(userData))
+
+    return { ...data }
 }
 
 export async function checkRoleLoader(

@@ -1,8 +1,7 @@
-import { Box, Container, List, ListItem, MenuItem } from '@mui/material'
+import { Box, Container, MenuItem } from '@mui/material'
 import { DateField } from '@mui/x-date-pickers'
-import dayjs from 'dayjs'
 import { useState, useEffect } from 'react'
-import { ActionFunctionArgs, Form, useRouteLoaderData } from 'react-router-dom'
+import { Form } from 'react-router-dom'
 import DefaultButton from '../../../components/DefaultButton'
 import DefaultCard from '../../../components/DefaultCard'
 import DefaultSelect from '../../../components/DefaultSelect'
@@ -10,21 +9,25 @@ import DefaultTextArea from '../../../components/DefaultTextArea'
 import DefaultTitle from '../../../components/DefaultTitle'
 import SearchBar from '../../../components/SearchBar'
 import api from '../../../services/api'
-import { UserLoaderDataType } from '../../../types/types'
+import { useUserDataStore } from '../../../store/useUserData'
 import { getAuthToken } from '../../../util/auth'
 
 const FuncionarioSolicitarFerias = () => {
-    const { id, manager, contract } = useRouteLoaderData(
-        'rootHome'
-    ) as UserLoaderDataType
+    const { id, idManager, contract } = useUserDataStore(
+        (state: any) => state.userData
+    )
     const token = getAuthToken()
     const [diasFerias, setDiasFerias] = useState<string>('')
-    const [antecipateSalary, setAntecipateSalary] = useState<string>('')
+    const [antecipateSalary, setAntecipateSalary] = useState<string | null>('')
     const [startDate, setStartDate] = useState<any>()
+    const [endDate, setEndDate] = useState<any>()
+    const [mensagemFuncionario, setMensagemFuncionario] = useState<
+        string | null
+    >(null)
     const [managers, setManagers] = useState<any>([])
 
     useEffect(() => {
-        if (!manager) {
+        if (!idManager) {
             ;(async () => {
                 const response = await api.get('/employees/managers', {
                     headers: {
@@ -37,7 +40,20 @@ const FuncionarioSolicitarFerias = () => {
         }
     }, [])
 
-    console.log(startDate)
+    if (!id) {
+        return (
+            <DefaultTitle
+                sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                }}
+            >
+                Carregando...
+            </DefaultTitle>
+        )
+    }
 
     return (
         <Container
@@ -71,11 +87,11 @@ const FuncionarioSolicitarFerias = () => {
                         alignSelf: 'flex-start',
                     }}
                 >
-                    {manager
+                    {idManager
                         ? 'Solicitar Férias'
                         : 'Ops, parece que você não tem gerente associado a sua conta. Selecione o seu gerente na lista abaixo:'}
                 </DefaultTitle>
-                {manager ? (
+                {idManager ? (
                     <>
                         <DefaultCard
                             minWidth={{
@@ -87,7 +103,7 @@ const FuncionarioSolicitarFerias = () => {
                                 md: '500px',
                             }}
                         >
-                            <Form method="post">
+                            <Form>
                                 <DefaultSelect
                                     value={String(diasFerias)}
                                     onChange={(event) =>
@@ -103,6 +119,9 @@ const FuncionarioSolicitarFerias = () => {
                                     <MenuItem key="10" value="10">
                                         10
                                     </MenuItem>
+                                    <MenuItem key="15" value="15">
+                                        15
+                                    </MenuItem>
                                 </DefaultSelect>
                                 <DateField
                                     value={startDate}
@@ -111,25 +130,31 @@ const FuncionarioSolicitarFerias = () => {
                                     }
                                     name="start"
                                     label="Data de Início"
-                                    format="DD/MM/YYYY"
+                                    format="YYYY-MM-DD"
                                     sx={{
                                         width: '100%',
                                         margin: '20px 0',
                                     }}
                                 />
                                 <DateField
-                                    value={startDate}
+                                    value={endDate}
+                                    onChange={(newValue) =>
+                                        setEndDate(newValue)
+                                    }
                                     name="end"
                                     label="Data de Término"
-                                    format="DD/MM/YYYY"
-                                    readOnly
+                                    format="YYYY-MM-DD"
                                     sx={{
                                         width: '100%',
                                     }}
                                 />
                                 {contract === 'CLT' ? (
                                     <DefaultSelect
-                                        value={antecipateSalary}
+                                        value={
+                                            antecipateSalary
+                                                ? antecipateSalary
+                                                : ''
+                                        }
                                         onChange={(event) =>
                                             setAntecipateSalary(
                                                 event.target.value
@@ -149,16 +174,52 @@ const FuncionarioSolicitarFerias = () => {
                                 ) : (
                                     <></>
                                 )}
-                                <DefaultTextArea name="mensagem" />
+                                <DefaultTextArea
+                                    name="mensagem"
+                                    value={
+                                        mensagemFuncionario
+                                            ? mensagemFuncionario
+                                            : ''
+                                    }
+                                    onChange={(event) => {
+                                        setMensagemFuncionario(
+                                            event.target.value
+                                        )
+                                    }}
+                                />
                                 <DefaultButton
                                     content={'Solicitar Férias'}
                                     type="submit"
+                                    onClick={async () => {
+                                        console.log(mensagemFuncionario)
+                                        const response = await api.post(
+                                            '/schedules',
+                                            {
+                                                idEmployee: String(id),
+                                                start: startDate,
+                                                end: endDate,
+                                                antecipateSalary:
+                                                    antecipateSalary
+                                                        ? antecipateSalary
+                                                        : '',
+                                                employeeComment:
+                                                    mensagemFuncionario
+                                                        ? mensagemFuncionario
+                                                        : '',
+                                            }
+                                        )
+                                    }}
                                 />
                             </Form>
                         </DefaultCard>
                     </>
                 ) : (
-                    <SearchBar data={managers} idEmployee={id} token={token} />
+                    <SearchBar
+                        data={managers}
+                        idEmployee={id}
+                        token={token}
+                        isManager={false}
+                    />
                 )}
             </Box>
         </Container>
@@ -166,17 +227,3 @@ const FuncionarioSolicitarFerias = () => {
 }
 
 export default FuncionarioSolicitarFerias
-
-export async function createScheduleAction({ request }: ActionFunctionArgs) {
-    const data = await request.formData()
-
-    console.log(data.get('start'))
-
-    // TODO: Verificação da data de início e fim
-    // TODO: Deixar o fim readonly e atualizar conforme os dias solicitados e o início
-    // TODO: atualizar o tipo de start e end do banco para Date e não DateTime
-    // TODO: Conectar com o banco
-    // TODO: Fazer o cálculo de dias de férias restantes (30 dias disponíveis no começo) e se tem, ao menos, um período de 15 dias
-
-    return null
-}

@@ -1,32 +1,75 @@
 import {
     Avatar,
     Box,
-    Card,
     Container,
-    IconButton,
-    InputBase,
     List,
-    ListItemButton,
-    Stack,
+    ListItem,
     Typography,
 } from '@mui/material'
 import DefaultTitle from '../../../components/DefaultTitle'
-import SearchIcon from '@mui/icons-material/Search'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import CardBoldTitleWithStatus from '../../../components/CardBoldTitleWithStatus'
 import DefaultCard from '../../../components/DefaultCard'
 import CardBoldTitle from '../../../components/CardBoldTitle'
 import CustomButton from '../../../components/CustomButton'
-import DefaultModal from '../../../components/DefaultModal'
+import { useUserDataStore } from '../../../store/useUserData'
+import { getAuthToken } from '../../../util/auth'
+import api from '../../../services/api'
+import SearchBar from '../../../components/SearchBar'
 
 const GestorTime = () => {
-    const [searchQuery, setSearchQuery] = useState('')
-    const [open, setOpen] = useState(false)
-    const handleOpen = () => {
-        setOpen(true)
-    }
-    const handleClose = () => {
-        setOpen(false)
+    const token = getAuthToken()
+    const userData = useUserDataStore((state: any) => state.userData)
+    const [managerEmployees, setManagerEmployees] = useState<any>([])
+    const [employeesWithoutManager, setEmployeesWithoutManager] = useState<any>(
+        []
+    )
+
+    useEffect(() => {
+        if (userData.id) {
+            ;(async () => {
+                const response = await api.get(
+                    `/employees/manager/${userData.id}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                )
+
+                setManagerEmployees(response.data)
+            })()
+        }
+    }, [userData])
+
+    useEffect(() => {
+        ;(async () => {
+            const response = await api.get(
+                '/employees/manager/employees-without-manager',
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            )
+
+            setEmployeesWithoutManager(response.data)
+        })()
+    }, [])
+
+    if (!userData.id) {
+        return (
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100vh',
+                }}
+            >
+                <Typography variant="h4">Carregando...</Typography>
+            </Box>
+        )
     }
 
     return (
@@ -55,305 +98,121 @@ const GestorTime = () => {
                     },
                 }}
             >
-                <Box>
+                <Box marginBottom="1rem">
                     <DefaultTitle>Adicione seus colegas de time</DefaultTitle>
 
-                    <Box
-                        component="form"
-                        sx={{
-                            backgroundColor: 'common.white',
-                            color: 'common.black',
-                            border: '1px solid',
-                            borderColor: 'grey.500',
-                            borderRadius: '10px',
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            position: 'relative',
-                        }}
-                    >
-                        <InputBase
-                            sx={{ ml: 1, flex: 1 }}
-                            placeholder="Pesquise um nome..."
-                            type="search"
-                            onChange={(event) => {
-                                setSearchQuery(event.target.value)
-                            }}
-                        />
-                        <IconButton
-                            type="button"
-                            sx={{ p: '10px' }}
-                            aria-label="search"
-                        >
-                            <SearchIcon />
-                        </IconButton>
-                        {searchQuery && (
-                            <Card
-                                sx={{
-                                    position: 'absolute',
-                                    top: '105%',
-                                    zIndex: 1,
-                                    width: '100%',
-                                    backgroundColor: 'primary.100',
-                                }}
-                            >
-                                <List>
-                                    <ListItemButton
-                                        onClick={handleOpen}
-                                        sx={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: '1rem',
-                                            padding: '.5rem auto',
-                                            cursor: 'pointer',
-                                            ':hover': {
-                                                backgroundColor:
-                                                    'primary.darker',
-                                            },
-                                        }}
-                                    >
-                                        <Avatar
-                                            sx={{
-                                                backgroundColor:
-                                                    'primary.light',
-                                                color: 'primary.main',
-                                                width: 50,
-                                                height: 50,
-                                                fontSize: 20,
-                                                fontWeight: 'medium',
-                                            }}
-                                        >
-                                            F
-                                        </Avatar>
-                                        <Box>
-                                            <CardBoldTitle>
-                                                Fulano de Tal
-                                            </CardBoldTitle>
-                                            <Typography>
-                                                Desenvolvedor Mobile
-                                            </Typography>
-                                        </Box>
-                                    </ListItemButton>
-                                </List>
-                                <DefaultModal
-                                    isOpen={open}
-                                    closeModal={handleClose}
-                                    handleApproval={handleClose}
-                                    approveText="Adicionar"
-                                    rejectText="Recusar"
-                                >
-                                    <Box
-                                        sx={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: '1rem',
-                                        }}
-                                    >
-                                        <Avatar
-                                            sx={{
-                                                backgroundColor:
-                                                    'primary.light',
-                                                color: 'primary.main',
-                                                width: 50,
-                                                height: 50,
-                                                fontSize: 20,
-                                                fontWeight: 'medium',
-                                            }}
-                                        >
-                                            F
-                                        </Avatar>
-                                        <Box>
-                                            <CardBoldTitle>
-                                                Fulano de Tal
-                                            </CardBoldTitle>
-                                            <Typography>
-                                                Desenvolvedor Mobile
-                                            </Typography>
-                                        </Box>
-                                    </Box>
-                                    <Typography
-                                        sx={{
-                                            marginTop: '.5rem',
-                                            marginBottom: '1rem',
-                                        }}
-                                    >
-                                        Você deseja adicionar essa pessoa ao seu
-                                        time?
-                                    </Typography>
-                                </DefaultModal>
-                            </Card>
-                        )}
-                    </Box>
+                    <SearchBar
+                        data={employeesWithoutManager}
+                        idEmployee={userData.id}
+                        token={token}
+                        isManager={true}
+                    />
                 </Box>
-                <Box>
+                <Box width="100%">
                     <DefaultTitle>Seu time</DefaultTitle>
-                    <Stack
+                    <List
                         sx={{
+                            width: '100%',
+                            display: 'flex',
                             flexDirection: {
                                 xs: 'column',
                                 md: 'row',
                             },
-                            gap: '1rem',
                             flexWrap: 'wrap',
-                            paddingRight: '0.725rem',
                         }}
                     >
-                        <DefaultCard
-                            width={{
-                                xs: 'calc(100vw - 2rem)',
-                                md: '300px',
-                                lg: '45%',
-                            }}
-                        >
-                            <Box
-                                display="flex"
-                                flexDirection="row"
-                                justifyContent="space-between"
+                        {managerEmployees.map((employee: any) => (
+                            <ListItem
+                                key={employee.id}
+                                sx={{
+                                    width: {
+                                        xs: 'calc(100vw - 2rem)',
+                                        md: '300px',
+                                        lg: '45%',
+                                    },
+                                    paddingLeft: '0',
+                                }}
                             >
-                                <Box
-                                    display="flex"
-                                    alignItems="center"
-                                    gap="1rem"
-                                >
-                                    <Avatar
-                                        sx={{
-                                            backgroundColor: 'primary.light',
-                                            color: 'primary.main',
-                                            width: 50,
-                                            height: 50,
-                                            fontSize: 20,
-                                            fontWeight: 'medium',
-                                        }}
+                                <DefaultCard width="100%">
+                                    <Box
+                                        display="flex"
+                                        flexDirection="row"
+                                        justifyContent="space-between"
                                     >
-                                        F
-                                    </Avatar>
-                                    <Box>
-                                        <CardBoldTitle>
-                                            Fulano de Tal
-                                        </CardBoldTitle>
-                                        <Typography>
-                                            Desenvolvedor Mobile
-                                        </Typography>
-                                        <CardBoldTitleWithStatus
-                                            color={'primary'}
+                                        <Box
+                                            sx={{
+                                                display: 'flex',
+                                                gap: '1rem',
+                                                alignItems: 'center',
+                                            }}
                                         >
-                                            TRABALHANDO
-                                        </CardBoldTitleWithStatus>
+                                            <Avatar
+                                                sx={{
+                                                    backgroundColor:
+                                                        'primary.light',
+                                                    color: 'primary.main',
+                                                    width: 50,
+                                                    height: 50,
+                                                    fontSize: 20,
+                                                    fontWeight: 'medium',
+                                                }}
+                                            >
+                                                {employee.name[0].toUpperCase()}
+                                            </Avatar>
+                                            <Box>
+                                                <CardBoldTitle>
+                                                    {employee.name}
+                                                </CardBoldTitle>
+                                                <Typography>
+                                                    {employee.role}
+                                                </Typography>
+                                                <CardBoldTitleWithStatus
+                                                    color={'primary'}
+                                                >
+                                                    TRABALHANDO
+                                                </CardBoldTitleWithStatus>
+                                            </Box>
+                                        </Box>
+                                        <Box alignSelf="center">
+                                            <CustomButton
+                                                type="reject"
+                                                variant="contained"
+                                                size="35px"
+                                                onClick={async () => {
+                                                    const token = getAuthToken()
+                                                    const response =
+                                                        await api.patch(
+                                                            `/employees/${employee.id}`,
+                                                            {
+                                                                idManager: null,
+                                                            },
+                                                            {
+                                                                headers: {
+                                                                    Authorization: `Bearer ${token}`,
+                                                                },
+                                                            }
+                                                        )
+
+                                                    if (response) {
+                                                        const newManagerEmployees =
+                                                            managerEmployees.filter(
+                                                                (item: any) =>
+                                                                    item.id !==
+                                                                    employee.id
+                                                            )
+
+                                                        setManagerEmployees(
+                                                            newManagerEmployees
+                                                        )
+                                                    }
+                                                }}
+                                            />
+                                        </Box>
                                     </Box>
-                                </Box>
-                                <Box alignSelf="center">
-                                    <CustomButton
-                                        type="reject"
-                                        variant="contained"
-                                        size="35px"
-                                    />
-                                </Box>
-                            </Box>
-                        </DefaultCard>
-                        <DefaultCard
-                            width={{
-                                xs: 'calc(100vw - 2rem)',
-                                md: '300px',
-                                lg: '45%',
-                            }}
-                        >
-                            <Box
-                                display="flex"
-                                flexDirection="row"
-                                justifyContent="space-between"
-                            >
-                                <Box
-                                    display="flex"
-                                    alignItems="center"
-                                    gap="1rem"
-                                >
-                                    <Avatar
-                                        sx={{
-                                            backgroundColor: 'primary.light',
-                                            color: 'primary.main',
-                                            width: 50,
-                                            height: 50,
-                                            fontSize: 20,
-                                            fontWeight: 'medium',
-                                        }}
-                                    >
-                                        F
-                                    </Avatar>
-                                    <Box>
-                                        <CardBoldTitle>
-                                            Fulano de Tal
-                                        </CardBoldTitle>
-                                        <Typography>
-                                            Desenvolvedor Mobile
-                                        </Typography>
-                                        <CardBoldTitleWithStatus
-                                            color={'primary'}
-                                        >
-                                            TRABALHANDO
-                                        </CardBoldTitleWithStatus>
-                                    </Box>
-                                </Box>
-                                <Box alignSelf="center">
-                                    <CustomButton
-                                        type="reject"
-                                        variant="contained"
-                                        size="35px"
-                                    />
-                                </Box>
-                            </Box>
-                        </DefaultCard>
-                        <DefaultCard
-                            width={{
-                                xs: 'calc(100vw - 2rem)',
-                                md: '300px',
-                                lg: '45%',
-                            }}
-                        >
-                            <Box
-                                display="flex"
-                                flexDirection="row"
-                                justifyContent="space-between"
-                            >
-                                <Box
-                                    display="flex"
-                                    alignItems="center"
-                                    gap="1rem"
-                                >
-                                    <Avatar
-                                        sx={{
-                                            backgroundColor: 'primary.light',
-                                            color: 'primary.main',
-                                            width: 50,
-                                            height: 50,
-                                            fontSize: 20,
-                                            fontWeight: 'medium',
-                                        }}
-                                    >
-                                        F
-                                    </Avatar>
-                                    <Box>
-                                        <CardBoldTitle>
-                                            Fulano de Tal
-                                        </CardBoldTitle>
-                                        <Typography>
-                                            Desenvolvedor Mobile
-                                        </Typography>
-                                        <CardBoldTitleWithStatus
-                                            color={'primary'}
-                                        >
-                                            TRABALHANDO
-                                        </CardBoldTitleWithStatus>
-                                    </Box>
-                                </Box>
-                                <Box alignSelf="center">
-                                    <CustomButton
-                                        type="reject"
-                                        variant="contained"
-                                        size="35px"
-                                    />
-                                </Box>
-                            </Box>
-                        </DefaultCard>
-                    </Stack>
+                                </DefaultCard>
+                            </ListItem>
+                        ))}
+                    </List>
                 </Box>
             </Container>
         </Box>

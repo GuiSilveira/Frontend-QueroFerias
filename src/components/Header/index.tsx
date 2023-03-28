@@ -100,37 +100,6 @@ const Header = () => {
                         <MenuIcon />
                     </IconButton>
                     <Box component="div" sx={{ display: 'flex', gap: '4px' }}>
-                        <IconButton
-                            size="medium"
-                            color="inherit"
-                            onClick={handleOpenNotificationMenu}
-                        >
-                            <Badge badgeContent={17} color="error">
-                                <NotificationsIcon />
-                            </Badge>
-                        </IconButton>
-                        <Menu
-                            open={Boolean(anchorElNotification)}
-                            onClose={handleCloseUserMenu}
-                            anchorEl={anchorElNotification}
-                            anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'left',
-                            }}
-                            keepMounted
-                        >
-                            <MenuItem key={1} onClick={handleCloseUserMenu}>
-                                <Typography textAlign="center">
-                                    "Notificação 1"
-                                </Typography>
-                            </MenuItem>
-                            <Divider light />
-                            <MenuItem key={2} onClick={handleCloseUserMenu}>
-                                <Typography textAlign="center">
-                                    "Notificação 2"
-                                </Typography>
-                            </MenuItem>
-                        </Menu>
                         <Link
                             to={'/home/profile'}
                             style={{

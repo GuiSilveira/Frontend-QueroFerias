@@ -16,7 +16,7 @@ const FuncionarioSolicitacoes = () => {
     const token = getAuthToken()
     const { id } = useRouteLoaderData('rootHome') as UserLoaderDataType
     const [open, setOpen] = useState(false)
-    const [filter, setFilter] = useState<string>('todas')
+    const [filter, setFilter] = useState<string>('Todas')
     const [solicitacoes, setSolicitacoes] = useState([])
     const [solicitacaoSelecionada, setSolicitacaoSelecionada] =
         useState<ScheduleType>()

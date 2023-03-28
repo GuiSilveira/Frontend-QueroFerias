@@ -13,16 +13,35 @@ import DefaultCard from '../../components/DefaultCard'
 import DefaultInput from '../../components/DefaultInput'
 import DefaultModal from '../../components/DefaultModal'
 import DefaultTitle from '../../components/DefaultTitle'
+import api from '../../services/api'
+import { useUserDataStore } from '../../store/useUserData'
 
 const Profile = () => {
-    const [open, setOpen] = useState(false)
-    const [focusPassword, setFocusPassword] = useState<boolean>(false)
+    // const [open, setOpen] = useState(false)
+    // const [focusPassword, setFocusPassword] = useState<boolean>(false)
+    // const [password, setPassword] = useState<string>('')
+    const userData = useUserDataStore((state: any) => state.userData)
 
-    const handleOpen = () => {
-        setOpen(true)
-    }
-    const handleClose = () => {
-        setOpen(false)
+    // const handleOpen = () => {
+    //     setOpen(true)
+    // }
+    // const handleClose = () => {
+    //     setOpen(false)
+    // }
+
+    if (!userData.id) {
+        return (
+            <DefaultTitle
+                sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                }}
+            >
+                Carregando...
+            </DefaultTitle>
+        )
     }
 
     return (
@@ -69,18 +88,8 @@ const Profile = () => {
                             fontWeight: 'medium',
                         }}
                     >
-                        F
+                        {userData?.name[0].toUpperCase()}
                     </Avatar>
-                    <Button
-                        variant="text"
-                        size="small"
-                        sx={{
-                            cursor: 'pointer',
-                            textDecoration: 'underline',
-                        }}
-                    >
-                        Mudar Avatar
-                    </Button>
                 </Stack>
                 <DefaultCard
                     width={{
@@ -99,10 +108,10 @@ const Profile = () => {
                                     >
                                         Nome:
                                     </Typography>
-                                    <Typography>Fulano de Tal</Typography>
+                                    <Typography>{userData.name}</Typography>
                                 </Box>
                             </ListItem>
-                            <ListItem>
+                            {/* <ListItem>
                                 <Stack direction="row" gap="10px">
                                     <Box>
                                         <Typography
@@ -135,13 +144,18 @@ const Profile = () => {
                                     <DefaultModal
                                         isOpen={open}
                                         closeModal={handleClose}
-                                        handleApproval={handleClose}
+                                        handleApproval={async () => {
+                                            await api.patch('')
+                                            
+                                            handleClose()
+                                        }}
                                         approveText={'Alterar'}
                                         rejectText={'Cancelar'}
                                     >
                                         <DefaultInput
                                             focus={focusPassword}
                                             setFocus={setFocusPassword}
+                                            setChange={setPassword}
                                             label={'Nova Senha'}
                                             placeholder={
                                                 'Digite uma nova senha...'
@@ -152,7 +166,7 @@ const Profile = () => {
                                         />
                                     </DefaultModal>
                                 </Stack>
-                            </ListItem>
+                            </ListItem> */}
                             <ListItem>
                                 <Box>
                                     <Typography
@@ -161,7 +175,9 @@ const Profile = () => {
                                     >
                                         Matrícula:
                                     </Typography>
-                                    <Typography>123456</Typography>
+                                    <Typography>
+                                        {userData.credential}
+                                    </Typography>
                                 </Box>
                             </ListItem>
                             <ListItem>
@@ -172,9 +188,18 @@ const Profile = () => {
                                     >
                                         Email:
                                     </Typography>
-                                    <Typography>
-                                        fulaninho.detal@verdecard.com
+                                    <Typography>{userData.email}</Typography>
+                                </Box>
+                            </ListItem>
+                            <ListItem>
+                                <Box>
+                                    <Typography
+                                        fontWeight="bold"
+                                        color="primary.main"
+                                    >
+                                        Email:
                                     </Typography>
+                                    <Typography>{userData.gmail}</Typography>
                                 </Box>
                             </ListItem>
                             <ListItem>
@@ -185,12 +210,10 @@ const Profile = () => {
                                     >
                                         Função:
                                     </Typography>
-                                    <Typography>
-                                        Programador Full Stack Júnior
-                                    </Typography>
+                                    <Typography>{userData.role}</Typography>
                                 </Box>
                             </ListItem>
-                            <ListItem>
+                            {/* <ListItem>
                                 <Box>
                                     <Typography
                                         fontWeight="bold"
@@ -198,9 +221,11 @@ const Profile = () => {
                                     >
                                         Gestor:
                                     </Typography>
-                                    <Typography>Gestor Tal</Typography>
+                                    <Typography>
+                                        {userData.idManager}
+                                    </Typography>
                                 </Box>
-                            </ListItem>
+                            </ListItem> */}
                         </List>
                     </Stack>
                 </DefaultCard>

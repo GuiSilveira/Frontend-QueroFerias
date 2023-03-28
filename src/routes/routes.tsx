@@ -3,9 +3,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { createBrowserRouter } from 'react-router-dom'
 import ErrorPage from '../pages/ErrorPage'
 import FuncionarioSolicitacoes from '../pages/Funcionario/FuncionarioSolicitacoes'
-import FuncionarioSolicitarFerias, {
-    createScheduleAction,
-} from '../pages/Funcionario/FuncionarioSolicitarFerias'
+import FuncionarioSolicitarFerias from '../pages/Funcionario/FuncionarioSolicitarFerias'
 import GestorDashboard from '../pages/Gestor/GestorDashboard'
 import GestorSolicitacoes from '../pages/Gestor/GestorSolicitacoes'
 import GestorTime from '../pages/Gestor/GestorTime'
@@ -17,6 +15,7 @@ import RootHome from '../pages/RootHome'
 import Root from '../pages/Root'
 import { checkAuthLoader, checkRoleLoader } from '../util/auth'
 import { logoutAction } from '../pages/Logout'
+import { useUserDataStore } from '../store/useUserData'
 
 const router = createBrowserRouter([
     {
@@ -61,7 +60,6 @@ const router = createBrowserRouter([
                             </LocalizationProvider>
                         ),
                         loader: () => checkRoleLoader('Employee', 'Manager'),
-                        action: createScheduleAction,
                     },
                     {
                         path: 'solicitacoes',

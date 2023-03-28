@@ -17,10 +17,10 @@ const DefaultFilter = ({ value, onChange }: PropTypes) => {
                 variant="outlined"
                 IconComponent={KeyboardArrowDownIcon}
             >
-                <MenuItem value="todas">Todas</MenuItem>
-                <MenuItem value="pendentes">Pendentes</MenuItem>
-                <MenuItem value="aprovadas">Aprovadas</MenuItem>
-                <MenuItem value="reprovadas">Reprovadas</MenuItem>
+                <MenuItem value="Todas">Todas</MenuItem>
+                <MenuItem value="Pendentes">Pendentes</MenuItem>
+                <MenuItem value="Aprovadas">Aprovadas</MenuItem>
+                <MenuItem value="Reprovadas">Reprovadas</MenuItem>
             </Select>
         </FormControl>
     )

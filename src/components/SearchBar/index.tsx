@@ -13,11 +13,13 @@ import CardBoldTitle from '../CardBoldTitle'
 import DefaultModal from '../DefaultModal'
 import SearchIcon from '@mui/icons-material/Search'
 import api from '../../services/api'
+import { useNavigate } from 'react-router-dom'
 
 type SearchBarProps = {
     data: []
     idEmployee: number
     token: string | null
+    isManager: boolean
 }
 
 type EmployeeType = {
@@ -27,13 +29,14 @@ type EmployeeType = {
     area: string
 }
 
-function SearchBar({ data, idEmployee, token }: SearchBarProps) {
+function SearchBar({ data, idEmployee, token, isManager }: SearchBarProps) {
     const [open, setOpen] = useState(false)
     const [filteredData, setFilteredData] = useState<any>([])
     const handleOpen = () => setOpen(true)
     const handleClose = () => setOpen(false)
     const typedData = data as EmployeeType[]
     const [selectedEmployee, setSelectedEmployee] = useState<any>()
+    const navigate = useNavigate()
 
     const handleFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
         const searchWord = event.target.value
@@ -47,8 +50,6 @@ function SearchBar({ data, idEmployee, token }: SearchBarProps) {
             setFilteredData(newFilter)
         }
     }
-
-    console.log(data)
 
     return (
         <Box
@@ -140,18 +141,34 @@ function SearchBar({ data, idEmployee, token }: SearchBarProps) {
                         rejectText="Recusar"
                         handleApproval={async () => {
                             // TODO: trocar os ids caso o usuário seja gestor
-                            await api.patch(
-                                `/employees/${idEmployee}`,
-                                {
-                                    idManager: selectedEmployee.id,
-                                },
-                                {
-                                    headers: {
-                                        Authorization: `Bearer ${token}`,
+                            if (!isManager) {
+                                await api.patch(
+                                    `/employees/${idEmployee}`,
+                                    {
+                                        idManager: String(selectedEmployee.id),
                                     },
-                                }
-                            )
+                                    {
+                                        headers: {
+                                            Authorization: `Bearer ${token}`,
+                                        },
+                                    }
+                                )
+                            } else {
+                                await api.patch(
+                                    `/employees/${String(selectedEmployee.id)}`,
+                                    {
+                                        idManager: idEmployee,
+                                    },
+                                    {
+                                        headers: {
+                                            Authorization: `Bearer ${token}`,
+                                        },
+                                    }
+                                )
+                            }
+
                             handleClose()
+                            navigate('/home')
                         }}
                     >
                         <Box
