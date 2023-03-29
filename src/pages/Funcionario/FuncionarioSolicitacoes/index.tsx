@@ -20,6 +20,7 @@ const FuncionarioSolicitacoes = () => {
     const [solicitacoes, setSolicitacoes] = useState([])
     const [solicitacaoSelecionada, setSolicitacaoSelecionada] =
         useState<ScheduleType>()
+    const [loading, setLoading] = useState(false)
 
     const handleOpen = () => {
         setOpen(true)
@@ -30,32 +31,49 @@ const FuncionarioSolicitacoes = () => {
 
     useEffect(() => {
         ;(async () => {
+            setLoading(true)
             const response = await api.get(`/employees/${id}/schedules`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             })
             setSolicitacoes(response.data)
+            setLoading(false)
         })()
-    }, [filter])
+    }, [])
 
     const filteredSolicitacoes = solicitacoes.filter((solicitacao: any) => {
-        if (filter === 'todas') {
+        if (filter === 'Todas') {
             return solicitacao
-        } else if (filter === 'pendentes' && solicitacao.status === 'Pending') {
+        } else if (filter === 'Pendentes' && solicitacao.status === 'Pending') {
             return solicitacao
         } else if (
-            filter === 'aprovadas' &&
+            filter === 'Aprovadas' &&
             solicitacao.status === 'Approved'
         ) {
             return solicitacao
         } else if (
-            filter === 'reprovadas' &&
+            filter === 'Reprovadas' &&
             solicitacao.status === 'Rejected'
         ) {
             return solicitacao
         }
     })
+
+    if (loading) {
+        return (
+            <DefaultTitle
+                sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                }}
+            >
+                Carregando...
+            </DefaultTitle>
+        )
+    }
 
     return (
         <Container
@@ -133,8 +151,8 @@ const FuncionarioSolicitacoes = () => {
                                 <DefaultCard width="100%">
                                     <CardBoldTitle>Férias</CardBoldTitle>
                                     <Typography>
-                                        De {solicitacao.start} até{' '}
-                                        {solicitacao.end}
+                                        De {solicitacao.start.slice(0, 10)} até{' '}
+                                        {solicitacao.end.slice(0, 10)}
                                     </Typography>
                                     <CardBoldTitle>Mensagem</CardBoldTitle>
                                     <Typography>
@@ -191,12 +209,12 @@ const FuncionarioSolicitacoes = () => {
             >
                 <CardBoldTitle>Férias</CardBoldTitle>
                 <Typography>
-                    De {solicitacaoSelecionada?.start} até{' '}
-                    {solicitacaoSelecionada?.end}
+                    De {solicitacaoSelecionada?.start.slice(0, 10)} até{' '}
+                    {solicitacaoSelecionada?.end.slice(0, 10)}
                 </Typography>
                 <CardBoldTitle>Motivo da Reprovação</CardBoldTitle>
                 <Typography marginBottom="1rem">
-                    {solicitacaoSelecionada?.managerComment}
+                    {solicitacaoSelecionada?.managerComment || 'Sem mensagem'}
                 </Typography>
             </DefaultModal>
         </Container>

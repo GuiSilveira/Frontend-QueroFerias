@@ -62,7 +62,7 @@ const CardNotificações = () => {
                     solicitações de agendamento de férias pendentes
                 </Typography>
                 <Link
-                    to={'/home/solicitacoes'}
+                    to={'/home/gestor/solicitacoes'}
                     style={{ textDecoration: 'none' }}
                 >
                     <DefaultButton

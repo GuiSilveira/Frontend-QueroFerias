@@ -26,7 +26,7 @@ const RootHome = () => {
 
             setUserData(response.data)
         })()
-    }, [setUserData])
+    }, [])
 
     return (
         <>

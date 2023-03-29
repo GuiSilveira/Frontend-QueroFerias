@@ -9,7 +9,7 @@ import GestorSolicitacoes from '../pages/Gestor/GestorSolicitacoes'
 import GestorTime from '../pages/Gestor/GestorTime'
 import Login, { loginAction } from '../pages/Login'
 import Profile from '../pages/Profile'
-import Register, { registerAction } from '../pages/Register'
+import Register from '../pages/Register'
 import Home from '../pages/Home'
 import RootHome from '../pages/RootHome'
 import Root from '../pages/Root'
@@ -45,7 +45,6 @@ const router = createBrowserRouter([
                         path: 'register',
                         element: <Register />,
                         loader: () => checkRoleLoader('Admin'),
-                        action: registerAction,
                     },
                     {
                         path: 'profile',

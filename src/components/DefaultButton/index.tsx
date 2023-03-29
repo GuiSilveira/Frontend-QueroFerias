@@ -6,20 +6,30 @@ type PropTypes = {
     small?: boolean
     onClick?: () => void
     type?: 'submit' | 'reset' | 'button'
+    disable?: boolean
 }
 
-const DefaultButton = ({ content, small, onClick, type }: PropTypes) => {
+const DefaultButton = ({
+    content,
+    small,
+    onClick,
+    type,
+    disable,
+}: PropTypes) => {
     const theme = useTheme()
 
     return (
         <Button
+            disabled={disable}
             variant="outlined"
             onClick={onClick}
             sx={{
                 borderRadius: '40px',
                 border: 'none',
                 color: `${theme.palette.common.white}`,
-                backgroundColor: `${theme.palette.primary.main}`,
+                backgroundColor: disable
+                    ? `${theme.palette.grey[400]}`
+                    : `${theme.palette.primary.main}`,
                 width: '100%',
                 marginTop: '1rem',
                 padding: `${small ? '0.5rem' : '1rem 0 1rem 0'}`,

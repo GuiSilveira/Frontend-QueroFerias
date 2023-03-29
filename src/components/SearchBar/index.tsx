@@ -14,6 +14,7 @@ import DefaultModal from '../DefaultModal'
 import SearchIcon from '@mui/icons-material/Search'
 import api from '../../services/api'
 import { useNavigate } from 'react-router-dom'
+import { useUserDataStore } from '../../store/useUserData'
 
 type SearchBarProps = {
     data: []
@@ -36,6 +37,7 @@ function SearchBar({ data, idEmployee, token, isManager }: SearchBarProps) {
     const handleClose = () => setOpen(false)
     const typedData = data as EmployeeType[]
     const [selectedEmployee, setSelectedEmployee] = useState<any>()
+    const setUserData = useUserDataStore((state: any) => state.setUserData)
     const navigate = useNavigate()
 
     const handleFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -140,9 +142,9 @@ function SearchBar({ data, idEmployee, token, isManager }: SearchBarProps) {
                         approveText="Adicionar"
                         rejectText="Recusar"
                         handleApproval={async () => {
-                            // TODO: trocar os ids caso o usuário seja gestor
+                            let response
                             if (!isManager) {
-                                await api.patch(
+                                response = await api.patch(
                                     `/employees/${idEmployee}`,
                                     {
                                         idManager: String(selectedEmployee.id),
@@ -154,7 +156,7 @@ function SearchBar({ data, idEmployee, token, isManager }: SearchBarProps) {
                                     }
                                 )
                             } else {
-                                await api.patch(
+                                response = await api.patch(
                                     `/employees/${String(selectedEmployee.id)}`,
                                     {
                                         idManager: idEmployee,
@@ -167,8 +169,11 @@ function SearchBar({ data, idEmployee, token, isManager }: SearchBarProps) {
                                 )
                             }
 
+                            if (response.status === 200) {
+                                setUserData(response.data)
+                            }
+
                             handleClose()
-                            navigate('/home')
                         }}
                     >
                         <Box

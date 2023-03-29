@@ -39,7 +39,7 @@ const CardCalendario = () => {
                             id: schedules.id,
                             summary: schedule.name,
                             startAt: schedules.start.slice(0, 10),
-                            endAt: schedules.end.slice(0, 10),
+                            endAt: schedules.end.slice(0, 10) + 'T23:59:59',
                             color: 'green',
                         }
                     })
