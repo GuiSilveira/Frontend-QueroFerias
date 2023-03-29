@@ -18,3 +18,19 @@ export type ScheduleType = {
     createdAt: string
     updatedAt: string
 }
+
+export type EmployeeScheduleType = {
+    id: number
+    name: string
+    schedules: ScheduleType[]
+}
+
+export type CalendarEvent = {
+    id: string
+    startAt: string
+    endAt: string
+    timezoneStartAt?: string // optional
+    summary: string
+    color: string
+    [key: string]: any
+}

@@ -49,7 +49,9 @@ const DefaultModal = ({
                             type="approve"
                             variant="contained"
                             startIcon={true}
-                            onClick={handleApproval}
+                            onClick={() => {
+                                handleApproval ? handleApproval() : closeModal()
+                            }}
                         >
                             {approveText}
                         </CustomButton>

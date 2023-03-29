@@ -7,6 +7,7 @@ type PropType = {
     minWidth?: string | object
     width?: string | object
     height?: string | object
+    paddingBottom?: string
 }
 
 const DefaultCard = ({
@@ -15,6 +16,7 @@ const DefaultCard = ({
     minWidth,
     width,
     height,
+    paddingBottom,
 }: PropType) => {
     const theme = useTheme()
     return (
@@ -28,7 +30,8 @@ const DefaultCard = ({
                     : { xs: 'calc(100vw - 2rem)', md: '300px', lg: '30%' },
                 minWidth: minWidth ? minWidth : '0',
                 maxWidth: maxWidth ? maxWidth : '100%',
-                height: height ? height : '100%',
+                height: height ? height : 'auto',
+                paddingBottom: paddingBottom ? paddingBottom : '1rem',
             }}
         >
             <CardContent

@@ -1,6 +1,5 @@
 import { Box, Container, Stack } from '@mui/material'
 import CardNotificações from './CardNotificações'
-import CardEventosFuturos from './CardEventosFuturos'
 import CardTime from './CardTime'
 import CardCalendario from './CardCalendario'
 
@@ -47,19 +46,17 @@ const GestorDashboard = () => (
             <Box
                 width={{
                     md: '100%',
+                    lg: '50%',
                 }}
                 display="flex"
                 flexDirection={{
                     xs: 'column',
-                    md: 'row',
                 }}
                 gap="1rem"
                 justifyContent={'space-evenly'}
             >
-                <Box display="flex" flexDirection={'column'} gap="1rem">
-                    <CardNotificações />
-                    <CardEventosFuturos />
-                </Box>
+                <CardNotificações />
+
                 <CardTime />
             </Box>
             <CardCalendario />

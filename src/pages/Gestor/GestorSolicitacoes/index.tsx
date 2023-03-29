@@ -2,23 +2,20 @@ import {
     Box,
     Container,
     List,
-    ListItem,
     SelectChangeEvent,
-    Stack,
     Typography,
 } from '@mui/material'
 import CardBoldTitle from '../../../components/CardBoldTitle'
-import DefaultCard from '../../../components/DefaultCard'
 import DefaultFilter from '../../../components/DefaultFilter'
 import DefaultTitle from '../../../components/DefaultTitle'
-import CardBoldTitleWithStatus from '../../../components/CardBoldTitleWithStatus'
-import CustomButton from '../../../components/CustomButton'
 import { useEffect, useState } from 'react'
 import DefaultModal from '../../../components/DefaultModal'
 import DefaultTextArea from '../../../components/DefaultTextArea'
 import { useUserDataStore } from '../../../store/useUserData'
 import { getAuthToken } from '../../../util/auth'
 import api from '../../../services/api'
+import Solicitacao from './Solicitacao'
+import { EmployeeScheduleType } from '../../../types/types'
 
 const GestorSolicitacoes = () => {
     const [open, setOpen] = useState(false)
@@ -26,11 +23,14 @@ const GestorSolicitacoes = () => {
     const [mensagemGestor, setMensagemGestor] = useState<string | null>(null)
     const [filter, setFilter] = useState<string>('Todas')
     const userData = useUserDataStore((state: any) => state.userData)
-    const [employeesWithSchedules, setEmployeesWithSchedules] = useState<any>(
-        []
-    )
+    const [employeesWithSchedules, setEmployeesWithSchedules] = useState<
+        EmployeeScheduleType[]
+    >([])
+    const [selectedSchedule, setSelectedSchedule] = useState<any>()
 
-    const handleOpen = () => {
+    const handleOpen = (schedule: any) => {
+        setSelectedSchedule(schedule)
+        console.log(selectedSchedule)
         setOpen(true)
     }
     const handleClose = () => {
@@ -57,7 +57,7 @@ const GestorSolicitacoes = () => {
                 setEmployeesWithSchedules(filteredEmployeeSchedules)
             })()
         }
-    }, [userData])
+    }, [userData, setEmployeesWithSchedules])
 
     if (!userData.id) {
         return (
@@ -118,392 +118,142 @@ const GestorSolicitacoes = () => {
                         flexWrap: 'wrap',
                         paddingRight: '1rem',
                         paddingBottom: '1rem',
+                        width: '100%',
                     }}
                 >
                     {employeesWithSchedules.map((employee: any) => {
                         return employee.schedules.map((schedule: any) => {
                             if (filter === 'Todas') {
                                 return (
-                                    <ListItem
-                                        sx={{
-                                            padding: '0',
-                                            width: {
-                                                xs: '100%',
-                                                md: '45%',
-                                                lg: '30%',
-                                            },
-                                        }}
+                                    <Solicitacao
+                                        employeesWithSchedule={
+                                            employeesWithSchedules
+                                        }
+                                        setEmployeesWithSchedule={
+                                            setEmployeesWithSchedules
+                                        }
                                         key={schedule.id}
-                                    >
-                                        <DefaultCard
-                                            width={'100%'}
-                                            height={{
-                                                xs: 'auto',
-                                            }}
-                                        >
-                                            <Stack
-                                                flexDirection="column"
-                                                justifyContent="space-between"
-                                            >
-                                                <Box marginBottom="1rem">
-                                                    <CardBoldTitle>
-                                                        Colaborador
-                                                    </CardBoldTitle>
-                                                    <Typography>
-                                                        {employee.name}
-                                                    </Typography>
-                                                    <CardBoldTitle>
-                                                        Férias
-                                                    </CardBoldTitle>
-                                                    <Typography>
-                                                        {`De ${schedule.start.slice(
-                                                            0,
-                                                            10
-                                                        )} até
-                                                            ${schedule.end.slice(
-                                                                0,
-                                                                10
-                                                            )}`}
-                                                    </Typography>
-                                                    <CardBoldTitle>
-                                                        Mensagem
-                                                    </CardBoldTitle>
-                                                    <Typography>
-                                                        {schedule.employeeComment
-                                                            ? schedule.employeeComment
-                                                            : 'Sem mensagem'}
-                                                    </Typography>
-                                                    <CardBoldTitleWithStatus
-                                                        color={
-                                                            schedule.status ===
-                                                            'Pending'
-                                                                ? 'grey.500'
-                                                                : schedule.status ===
-                                                                  'Approved'
-                                                                ? 'primary'
-                                                                : 'warning.main'
-                                                        }
-                                                    >
-                                                        {schedule.status}
-                                                    </CardBoldTitleWithStatus>
-                                                </Box>
-                                                {schedule.status ===
-                                                    'Pending' && (
-                                                    <Stack
-                                                        flexDirection="row"
-                                                        gap="1rem"
-                                                        margin="auto"
-                                                    >
-                                                        <CustomButton
-                                                            type="approve"
-                                                            variant="contained"
-                                                            startIcon={true}
-                                                        >
-                                                            Aceitar
-                                                        </CustomButton>
-                                                        <CustomButton
-                                                            type="reject"
-                                                            startIcon={true}
-                                                            variant="outlined"
-                                                            onClick={handleOpen}
-                                                        >
-                                                            Recusar
-                                                        </CustomButton>
-                                                    </Stack>
-                                                )}
-                                            </Stack>
-                                        </DefaultCard>
-                                    </ListItem>
+                                        schedule={schedule}
+                                        employee={employee}
+                                        handleOpen={() => {
+                                            handleOpen({
+                                                id: schedule.id,
+                                                employeeId: employee.id,
+                                                employeeName: employee.name,
+                                                startDate: schedule.start.slice(
+                                                    0,
+                                                    10
+                                                ),
+                                                endDate: schedule.end.slice(
+                                                    0,
+                                                    10
+                                                ),
+                                                employeeComment:
+                                                    schedule.employeeComment,
+                                            })
+                                        }}
+                                    />
                                 )
                             } else if (filter === 'Aprovadas') {
                                 return (
                                     schedule.status === 'Approved' && (
-                                        <ListItem
-                                            sx={{
-                                                padding: '0',
-                                                width: {
-                                                    xs: '100%',
-                                                    md: '45%',
-                                                    lg: '30%',
-                                                },
-                                            }}
+                                        <Solicitacao
+                                            employeesWithSchedule={
+                                                employeesWithSchedules
+                                            }
+                                            setEmployeesWithSchedule={
+                                                setEmployeesWithSchedules
+                                            }
                                             key={schedule.id}
-                                        >
-                                            <DefaultCard
-                                                width={'100%'}
-                                                height={{
-                                                    xs: 'auto',
-                                                }}
-                                            >
-                                                <Stack
-                                                    flexDirection="column"
-                                                    justifyContent="space-between"
-                                                >
-                                                    <Box marginBottom="1rem">
-                                                        <CardBoldTitle>
-                                                            Colaborador
-                                                        </CardBoldTitle>
-                                                        <Typography>
-                                                            {employee.name}
-                                                        </Typography>
-                                                        <CardBoldTitle>
-                                                            Férias
-                                                        </CardBoldTitle>
-                                                        <Typography>
-                                                            {`De ${schedule.start.slice(
-                                                                0,
-                                                                10
-                                                            )} até
-                                                                ${schedule.end.slice(
-                                                                    0,
-                                                                    10
-                                                                )}`}
-                                                        </Typography>
-                                                        <CardBoldTitle>
-                                                            Mensagem
-                                                        </CardBoldTitle>
-                                                        <Typography>
-                                                            {schedule.employeeComment
-                                                                ? schedule.employeeComment
-                                                                : 'Sem mensagem'}
-                                                        </Typography>
-                                                        <CardBoldTitleWithStatus
-                                                            color={
-                                                                schedule.status ===
-                                                                'Pending'
-                                                                    ? 'grey.500'
-                                                                    : schedule.status ===
-                                                                      'Approved'
-                                                                    ? 'primary'
-                                                                    : 'warning.main'
-                                                            }
-                                                        >
-                                                            {schedule.status}
-                                                        </CardBoldTitleWithStatus>
-                                                    </Box>
-                                                    {schedule.status ===
-                                                        'Pending' && (
-                                                        <Stack
-                                                            flexDirection="row"
-                                                            gap="1rem"
-                                                            margin="auto"
-                                                        >
-                                                            <CustomButton
-                                                                type="approve"
-                                                                variant="contained"
-                                                                startIcon={true}
-                                                            >
-                                                                Aceitar
-                                                            </CustomButton>
-                                                            <CustomButton
-                                                                type="reject"
-                                                                startIcon={true}
-                                                                variant="outlined"
-                                                                onClick={
-                                                                    handleOpen
-                                                                }
-                                                            >
-                                                                Recusar
-                                                            </CustomButton>
-                                                        </Stack>
-                                                    )}
-                                                </Stack>
-                                            </DefaultCard>
-                                        </ListItem>
+                                            schedule={schedule}
+                                            employee={employee}
+                                            handleOpen={() => {
+                                                handleOpen({
+                                                    id: schedule.id,
+                                                    employeeId: employee.id,
+                                                    employeeName: employee.name,
+                                                    startDate:
+                                                        schedule.start.slice(
+                                                            0,
+                                                            10
+                                                        ),
+                                                    endDate: schedule.end.slice(
+                                                        0,
+                                                        10
+                                                    ),
+                                                    employeeComment:
+                                                        schedule.employeeComment,
+                                                })
+                                            }}
+                                        />
                                     )
                                 )
                             } else if (filter === 'Reprovadas') {
                                 return (
                                     schedule.status === 'Rejected' && (
-                                        <ListItem
-                                            sx={{
-                                                padding: '0',
-                                                width: {
-                                                    xs: '100%',
-                                                    md: '45%',
-                                                    lg: '30%',
-                                                },
-                                            }}
+                                        <Solicitacao
+                                            employeesWithSchedule={
+                                                employeesWithSchedules
+                                            }
+                                            setEmployeesWithSchedule={
+                                                setEmployeesWithSchedules
+                                            }
                                             key={schedule.id}
-                                        >
-                                            <DefaultCard
-                                                width={'100%'}
-                                                height={{
-                                                    xs: 'auto',
-                                                }}
-                                            >
-                                                <Stack
-                                                    flexDirection="column"
-                                                    justifyContent="space-between"
-                                                >
-                                                    <Box marginBottom="1rem">
-                                                        <CardBoldTitle>
-                                                            Colaborador
-                                                        </CardBoldTitle>
-                                                        <Typography>
-                                                            {employee.name}
-                                                        </Typography>
-                                                        <CardBoldTitle>
-                                                            Férias
-                                                        </CardBoldTitle>
-                                                        <Typography>
-                                                            {`De ${schedule.start.slice(
-                                                                0,
-                                                                10
-                                                            )} até
-                                                                ${schedule.end.slice(
-                                                                    0,
-                                                                    10
-                                                                )}`}
-                                                        </Typography>
-                                                        <CardBoldTitle>
-                                                            Mensagem
-                                                        </CardBoldTitle>
-                                                        <Typography>
-                                                            {schedule.employeeComment
-                                                                ? schedule.employeeComment
-                                                                : 'Sem mensagem'}
-                                                        </Typography>
-                                                        <CardBoldTitleWithStatus
-                                                            color={
-                                                                schedule.status ===
-                                                                'Pending'
-                                                                    ? 'grey.500'
-                                                                    : schedule.status ===
-                                                                      'Approved'
-                                                                    ? 'primary'
-                                                                    : 'warning.main'
-                                                            }
-                                                        >
-                                                            {schedule.status}
-                                                        </CardBoldTitleWithStatus>
-                                                    </Box>
-                                                    {schedule.status ===
-                                                        'Pending' && (
-                                                        <Stack
-                                                            flexDirection="row"
-                                                            gap="1rem"
-                                                            margin="auto"
-                                                        >
-                                                            <CustomButton
-                                                                type="approve"
-                                                                variant="contained"
-                                                                startIcon={true}
-                                                            >
-                                                                Aceitar
-                                                            </CustomButton>
-                                                            <CustomButton
-                                                                type="reject"
-                                                                startIcon={true}
-                                                                variant="outlined"
-                                                                onClick={
-                                                                    handleOpen
-                                                                }
-                                                            >
-                                                                Recusar
-                                                            </CustomButton>
-                                                        </Stack>
-                                                    )}
-                                                </Stack>
-                                            </DefaultCard>
-                                        </ListItem>
+                                            schedule={schedule}
+                                            employee={employee}
+                                            handleOpen={() => {
+                                                handleOpen({
+                                                    id: schedule.id,
+                                                    employeeId: employee.id,
+                                                    employeeName: employee.name,
+                                                    startDate:
+                                                        schedule.start.slice(
+                                                            0,
+                                                            10
+                                                        ),
+                                                    endDate: schedule.end.slice(
+                                                        0,
+                                                        10
+                                                    ),
+                                                    employeeComment:
+                                                        schedule.employeeComment,
+                                                })
+                                            }}
+                                        />
                                     )
                                 )
                             } else if (filter === 'Pendentes') {
                                 return (
                                     schedule.status === 'Pending' && (
-                                        <ListItem
-                                            sx={{
-                                                padding: '0',
-                                                width: {
-                                                    xs: '100%',
-                                                    md: '45%',
-                                                    lg: '30%',
-                                                },
-                                            }}
+                                        <Solicitacao
+                                            employeesWithSchedule={
+                                                employeesWithSchedules
+                                            }
+                                            setEmployeesWithSchedule={
+                                                setEmployeesWithSchedules
+                                            }
                                             key={schedule.id}
-                                        >
-                                            <DefaultCard
-                                                width={'100%'}
-                                                height={{
-                                                    xs: 'auto',
-                                                }}
-                                            >
-                                                <Stack
-                                                    flexDirection="column"
-                                                    justifyContent="space-between"
-                                                >
-                                                    <Box marginBottom="1rem">
-                                                        <CardBoldTitle>
-                                                            Colaborador
-                                                        </CardBoldTitle>
-                                                        <Typography>
-                                                            {employee.name}
-                                                        </Typography>
-                                                        <CardBoldTitle>
-                                                            Férias
-                                                        </CardBoldTitle>
-                                                        <Typography>
-                                                            {`De ${schedule.start.slice(
-                                                                0,
-                                                                10
-                                                            )} até
-                                                                ${schedule.end.slice(
-                                                                    0,
-                                                                    10
-                                                                )}`}
-                                                        </Typography>
-                                                        <CardBoldTitle>
-                                                            Mensagem
-                                                        </CardBoldTitle>
-                                                        <Typography>
-                                                            {schedule.employeeComment
-                                                                ? schedule.employeeComment
-                                                                : 'Sem mensagem'}
-                                                        </Typography>
-                                                        <CardBoldTitleWithStatus
-                                                            color={
-                                                                schedule.status ===
-                                                                'Pending'
-                                                                    ? 'grey.500'
-                                                                    : schedule.status ===
-                                                                      'Approved'
-                                                                    ? 'primary'
-                                                                    : 'warning.main'
-                                                            }
-                                                        >
-                                                            {schedule.status}
-                                                        </CardBoldTitleWithStatus>
-                                                    </Box>
-                                                    {schedule.status ===
-                                                        'Pending' && (
-                                                        <Stack
-                                                            flexDirection="row"
-                                                            gap="1rem"
-                                                            margin="auto"
-                                                        >
-                                                            <CustomButton
-                                                                type="approve"
-                                                                variant="contained"
-                                                                startIcon={true}
-                                                            >
-                                                                Aceitar
-                                                            </CustomButton>
-                                                            <CustomButton
-                                                                type="reject"
-                                                                startIcon={true}
-                                                                variant="outlined"
-                                                                onClick={
-                                                                    handleOpen
-                                                                }
-                                                            >
-                                                                Recusar
-                                                            </CustomButton>
-                                                        </Stack>
-                                                    )}
-                                                </Stack>
-                                            </DefaultCard>
-                                        </ListItem>
+                                            schedule={schedule}
+                                            employee={employee}
+                                            handleOpen={() => {
+                                                handleOpen({
+                                                    id: schedule.id,
+                                                    employeeId: employee.id,
+                                                    employeeName: employee.name,
+                                                    startDate:
+                                                        schedule.start.slice(
+                                                            0,
+                                                            10
+                                                        ),
+                                                    endDate: schedule.end.slice(
+                                                        0,
+                                                        10
+                                                    ),
+                                                    employeeComment:
+                                                        schedule.employeeComment,
+                                                })
+                                            }}
+                                        />
                                     )
                                 )
                             }
@@ -513,18 +263,66 @@ const GestorSolicitacoes = () => {
                 <DefaultModal
                     isOpen={open}
                     closeModal={handleClose}
-                    handleApproval={handleClose}
+                    handleApproval={async () => {
+                        const response = await api.patch(
+                            `/schedules/${selectedSchedule.id}`,
+                            {
+                                status: 'Rejected',
+                            }
+                        )
+
+                        if (!response) {
+                            throw new Error('Erro ao rejeitar')
+                        }
+
+                        const newEmployeesWithSchedule =
+                            employeesWithSchedules.map((employee) => {
+                                if (
+                                    employee.id === selectedSchedule.idEmployee
+                                ) {
+                                    employee.schedules.map(
+                                        (employeeSchedule) => {
+                                            if (
+                                                selectedSchedule.id ===
+                                                employeeSchedule.id
+                                            ) {
+                                                employeeSchedule.status =
+                                                    'Rejected'
+                                                console.log(employeeSchedule)
+                                            }
+
+                                            return employeeSchedule
+                                        }
+                                    )
+                                }
+
+                                return employee
+                            })
+
+                        setEmployeesWithSchedules(newEmployeesWithSchedule)
+                        setMensagemGestor('')
+                        handleClose()
+                    }}
                     approveText={'Enviar'}
                     rejectText={'Cancelar'}
                 >
                     <Box marginBottom="1rem">
                         <CardBoldTitle>Dados da Solicitação</CardBoldTitle>
-                        <CardBoldTitle>Colaborador</CardBoldTitle>
-                        <Typography>Fulano de Tal</Typography>
+                        <CardBoldTitle>Nome</CardBoldTitle>
+                        <Typography>
+                            {selectedSchedule?.employeeName}
+                        </Typography>
                         <CardBoldTitle>Férias</CardBoldTitle>
-                        <Typography>De 08/17/2023 até 08/17/2023</Typography>
+                        <Typography>
+                            De {selectedSchedule?.startDate} até{' '}
+                            {selectedSchedule?.endDate}
+                        </Typography>
                         <CardBoldTitle>Mensagem</CardBoldTitle>
-                        <Typography>Lorem ipsum sit dor amet</Typography>
+                        <Typography>
+                            {selectedSchedule?.employeeComment
+                                ? selectedSchedule?.employeeComment
+                                : 'Sem mensagem'}
+                        </Typography>
                     </Box>
                     <Box marginBottom="1rem">
                         <CardBoldTitle>

@@ -99,11 +99,7 @@ const CardTime = () => {
                                 alignItems="center"
                                 gap="12px"
                             >
-                                <Typography>30</Typography>
-                                <ArrowUpwardIcon
-                                    color="primary"
-                                    fontSize="small"
-                                />
+                                <Typography>26</Typography>
                             </Stack>
                         </Stack>
                         <Stack
@@ -131,13 +127,6 @@ const CardTime = () => {
                                 gap="12px"
                             >
                                 <Typography>26</Typography>
-                                <ArrowUpwardIcon
-                                    color="warning"
-                                    fontSize="small"
-                                    sx={{
-                                        transform: 'rotate(180deg)',
-                                    }}
-                                />
                             </Stack>
                         </Stack>
                     </Stack>

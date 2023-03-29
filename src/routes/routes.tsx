@@ -15,7 +15,6 @@ import RootHome from '../pages/RootHome'
 import Root from '../pages/Root'
 import { checkAuthLoader, checkRoleLoader } from '../util/auth'
 import { logoutAction } from '../pages/Logout'
-import { useUserDataStore } from '../store/useUserData'
 
 const router = createBrowserRouter([
     {
