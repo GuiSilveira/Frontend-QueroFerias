@@ -167,9 +167,15 @@ const GestorTime = () => {
                                                     {employee.role}
                                                 </Typography>
                                                 <CardBoldTitleWithStatus
-                                                    color={'primary'}
+                                                    color={
+                                                        employee.vacationStatus
+                                                            ? 'warning.main'
+                                                            : 'primary'
+                                                    }
                                                 >
-                                                    TRABALHANDO
+                                                    {employee.vacationStatus
+                                                        ? 'De Férias'
+                                                        : 'Trabalhando'}
                                                 </CardBoldTitleWithStatus>
                                             </Box>
                                         </Box>

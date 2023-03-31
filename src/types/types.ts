@@ -34,3 +34,8 @@ export type CalendarEvent = {
     color: string
     [key: string]: any
 }
+
+export type UserState = {
+    userData: object
+    setUserData: (userData: object) => void
+}

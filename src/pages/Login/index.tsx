@@ -7,6 +7,9 @@ import RoundedCornerContainer from '../../components/RoundedCornerContainer'
 import DefaultContainer from '../../components/DefaultContainer'
 import { ActionFunctionArgs, Form, redirect } from 'react-router-dom'
 import api from '../../services/api'
+import { useUserDataStore } from '../../store/useUserData'
+import { UserState } from '../../types/types'
+import { checkAuthLoader } from '../../util/auth'
 
 const Login = () => {
     const [focusMatricula, setFocusMatricula] = useState<boolean>(false)
@@ -89,13 +92,11 @@ export async function loginAction({ request }: ActionFunctionArgs) {
         const response = await api.post('/auth/login', authData)
 
         const { accessToken } = response.data
-
-        // TODO: Tratar erro caso o status code seja diferente de 200
-
         localStorage.setItem('token', accessToken)
 
         return redirect('/home')
+        // TODO: Tratar erro caso o status code seja diferente de 200
     } catch (error) {
-        return null
+        return error
     }
 }

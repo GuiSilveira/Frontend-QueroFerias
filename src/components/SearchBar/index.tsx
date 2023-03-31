@@ -13,7 +13,6 @@ import CardBoldTitle from '../CardBoldTitle'
 import DefaultModal from '../DefaultModal'
 import SearchIcon from '@mui/icons-material/Search'
 import api from '../../services/api'
-import { useNavigate } from 'react-router-dom'
 import { useUserDataStore } from '../../store/useUserData'
 
 type SearchBarProps = {
@@ -38,7 +37,6 @@ function SearchBar({ data, idEmployee, token, isManager }: SearchBarProps) {
     const typedData = data as EmployeeType[]
     const [selectedEmployee, setSelectedEmployee] = useState<any>()
     const setUserData = useUserDataStore((state: any) => state.setUserData)
-    const navigate = useNavigate()
 
     const handleFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
         const searchWord = event.target.value

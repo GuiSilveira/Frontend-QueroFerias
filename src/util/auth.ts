@@ -29,6 +29,8 @@ export async function checkAuthLoader() {
     const userData = {
         id: data.id,
         contract: data.contract,
+        position: data.position,
+        idManager: data.manager,
     }
 
     localStorage.setItem('user', JSON.stringify(userData))
