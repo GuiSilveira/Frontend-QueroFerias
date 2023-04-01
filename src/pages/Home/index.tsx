@@ -1,19 +1,16 @@
 import * as dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
-import { useRouteLoaderData } from 'react-router-dom'
+import { useNavigate, useRouteLoaderData } from 'react-router-dom'
 import DefaultTitle from '../../components/DefaultTitle'
 import api, { emailApi } from '../../services/api'
 import { useUserDataStore } from '../../store/useUserData'
 import { ScheduleType, UserLoaderDataType } from '../../types/types'
 import { getAuthToken } from '../../util/auth'
+import { Typography } from '@mui/material'
+import DefaultModal from '../../components/DefaultModal'
 
 const Home = () => {
     const token = getAuthToken()
-    const [approvedSchedules, setApprovedSchedules] = useState<ScheduleType[]>(
-        []
-    )
-    const [loadingApprovedSchedules, setLoadingApprovedSchedules] =
-        useState(false)
     const userData = useUserDataStore((state: any) => state.userData)
     const verifiedTokenData = useRouteLoaderData(
         'rootHome'
@@ -21,9 +18,34 @@ const Home = () => {
     const data = localStorage.getItem('user')
         ? JSON.parse(localStorage.getItem('user') as string)
         : verifiedTokenData.id
+    const [searchedUserData, setSearchedUserData] = useState<any>()
+    const [approvedSchedules, setApprovedSchedules] = useState<ScheduleType[]>(
+        []
+    )
     const [employeesApprovedSchedules, setEmployeesApprovedSchedules] =
         useState<ScheduleType[]>([])
     const [managerEmployees, setManagerEmployees] = useState<any[]>([])
+    const [detailedApprovedSchedules, setDetailedApprovedSchedules] = useState<
+        any[]
+    >([])
+    const [loadingApprovedSchedules, setLoadingApprovedSchedules] =
+        useState(false)
+    const [
+        loadingDetailedApprovedSchedules,
+        setLoadingDetailedApprovedSchedules,
+    ] = useState(false)
+    const [
+        loadingEmployeeApprovedSchedules,
+        setLoadingEmployeeApprovedSchedules,
+    ] = useState(false)
+    const [loadingManagerEmployees, setLoadingManagerEmployees] =
+        useState(false)
+    const [loadingSearchedUserData, setLoadingSearchedUserData] =
+        useState(false)
+    const [openModal, setOpenModal] = useState(false)
+    const navigate = useNavigate()
+
+    const handleClose = () => setOpenModal(false)
 
     useEffect(() => {
         ;(async () => {
@@ -36,9 +58,53 @@ const Home = () => {
     }, [])
 
     useEffect(() => {
+        if (!userData) return
+        ;(async () => {
+            setLoadingSearchedUserData(true)
+            const response = await api.get(`/employees/${data.id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+
+            if (response.data.vacationStatus === 'Delayed') {
+                setOpenModal(true)
+            }
+            setSearchedUserData(response.data)
+            setLoadingSearchedUserData(false)
+        })()
+
+        return () => {}
+    }, [])
+
+    useEffect(() => {
         if (!data.position) return
 
         if (data.position === 'Manager') {
+            ;(async () => {
+                setLoadingDetailedApprovedSchedules(true)
+                const response = await api.get(
+                    `/employees/manager/${data.id}/schedules/Approved`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                )
+
+                setDetailedApprovedSchedules(response.data)
+
+                setLoadingDetailedApprovedSchedules(false)
+            })()
+        }
+        return () => {}
+    }, [])
+
+    useEffect(() => {
+        if (!data.position) return
+
+        if (data.position === 'Manager') {
+            setLoadingEmployeeApprovedSchedules(true)
             ;(async () => {
                 const response = await api.get(
                     `/employees/manager/${data.id}/all_approved/schedules`,
@@ -50,6 +116,7 @@ const Home = () => {
                 )
 
                 setEmployeesApprovedSchedules(response.data)
+                setLoadingEmployeeApprovedSchedules(false)
             })()
         }
     }, [])
@@ -58,6 +125,7 @@ const Home = () => {
         if (!data.position) return
 
         if (data.position === 'Manager') {
+            setLoadingManagerEmployees(true)
             ;(async () => {
                 const response = await api.get(
                     `/employees/manager/${data.id}`,
@@ -69,58 +137,18 @@ const Home = () => {
                 )
 
                 setManagerEmployees(response.data)
+                setLoadingManagerEmployees(false)
             })()
         }
     }, [])
 
-    // MANAGER VENDO, NAS SOLICITAÇÕES MAIS RECENTES SE OS FUNCIONÁRIOS ESTÃO DE FÉRIAS E ATUALIZANDO CASO SIM
-    if (employeesApprovedSchedules.length > 0) {
-        employeesApprovedSchedules.map((schedule) => {
-            if (
-                dayjs(schedule.start).isSame(dayjs()) ||
-                (dayjs().isAfter(dayjs(schedule.start)) &&
-                    dayjs().isBefore(dayjs(schedule.end)))
-            ) {
-                ;(async function () {
-                    await api.patch(
-                        `/employees/${schedule.idEmployee}`,
-                        {
-                            vacationStatus: true,
-                        },
-                        {
-                            headers: {
-                                Authorization: `Bearer ${token}`,
-                            },
-                        }
-                    )
-                })()
-            } else {
-                if (managerEmployees.length > 0) {
-                    const employee = managerEmployees.find((employee) => {
-                        return employee.id === schedule.idEmployee
-                    })
-                    ;(async function () {
-                        if (employee.vacationStatus === true) {
-                            await api.patch(
-                                `/employees/${schedule.idEmployee}`,
-                                {
-                                    vacationStatus: false,
-                                },
-                                {
-                                    headers: {
-                                        Authorization: `Bearer ${token}`,
-                                    },
-                                }
-                            )
-                        }
-                    })()
-                }
-            }
-        })
-    }
-
-    // User
-    if (loadingApprovedSchedules) {
+    if (
+        loadingApprovedSchedules ||
+        loadingDetailedApprovedSchedules ||
+        loadingEmployeeApprovedSchedules ||
+        loadingManagerEmployees ||
+        loadingSearchedUserData
+    ) {
         return (
             <DefaultTitle
                 sx={{
@@ -135,6 +163,105 @@ const Home = () => {
         )
     }
 
+    // Pegar a data de contratação do usuário e somar 12 meses, verificar se houve alguma solicitação de férias aprovada no período do início do período aquisito até 11 meses depois. Se não houver, alterar o vacationStatus para 'atrasado'
+    if (detailedApprovedSchedules.length > 0) {
+        detailedApprovedSchedules.map((employee) => {
+            const contractDate = dayjs(employee.contractDate)
+            const anoAtual = dayjs().year()
+            const periodoAquisitivoInicio = contractDate.year(anoAtual)
+            const periodoAquisitivoFim = periodoAquisitivoInicio.add(
+                12,
+                'month'
+            )
+            const periodoDePendencia = periodoAquisitivoFim.subtract(1, 'month')
+
+            let naoPossuiFeriasAprovadasNoPeriodo = true
+
+            employee.schedules.forEach((schedule: ScheduleType) => {
+                if (
+                    dayjs(schedule.start).isAfter(periodoAquisitivoInicio) &&
+                    dayjs(schedule.end).isBefore(periodoAquisitivoFim)
+                ) {
+                    naoPossuiFeriasAprovadasNoPeriodo = false
+                }
+            })
+
+            console.log(
+                `Employee ${employee.name}`,
+                naoPossuiFeriasAprovadasNoPeriodo
+            )
+
+            if (
+                naoPossuiFeriasAprovadasNoPeriodo &&
+                (dayjs().isSame(periodoDePendencia) ||
+                    (dayjs().isAfter(periodoDePendencia) &&
+                        dayjs().isBefore(periodoAquisitivoFim)))
+            ) {
+                ;(async function () {
+                    await api.patch(
+                        `/employees/${employee.id}`,
+                        {
+                            vacationStatus: 'Delayed',
+                        },
+                        {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                        }
+                    )
+                })()
+            }
+        })
+    }
+
+    // MANAGER VENDO, NAS SOLICITAÇÕES MAIS RECENTES SE OS FUNCIONÁRIOS ESTÃO DE FÉRIAS E ATUALIZANDO CASO SIM
+    if (employeesApprovedSchedules.length > 0) {
+        employeesApprovedSchedules.map((schedule) => {
+            if (
+                dayjs(schedule.start).isSame(dayjs()) ||
+                (dayjs().isAfter(dayjs(schedule.start)) &&
+                    dayjs().isBefore(dayjs(schedule.end)))
+            ) {
+                ;(async function () {
+                    await api.patch(
+                        `/employees/${schedule.idEmployee}`,
+                        {
+                            vacationStatus: 'Vacation',
+                        },
+                        {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                        }
+                    )
+                })()
+            } else {
+                if (managerEmployees.length > 0) {
+                    const employee = managerEmployees.find((employee) => {
+                        return employee.id === schedule.idEmployee
+                    })
+                    ;(async function () {
+                        if (employee.vacationStatus === 'Vacation') {
+                            await api.patch(
+                                `/employees/${schedule.idEmployee}`,
+                                {
+                                    vacationStatus: 'Working',
+                                },
+                                {
+                                    headers: {
+                                        Authorization: `Bearer ${token}`,
+                                    },
+                                }
+                            )
+                        }
+                    })()
+                }
+            }
+        })
+    }
+
+    // UserColaborador
+
     // Requisito 11 - caso não tenha feito solicitações ainda
     if (approvedSchedules.length === 0) {
         const contractDateToPermitUse = dayjs(userData.contractDate).add(
@@ -147,11 +274,29 @@ const Home = () => {
             dayjs().isAfter(contractDateToPermitUse)
         ) {
             if (
-                dayjs().isAfter(contractDateToPermitUse.add(11, 'month')) &&
-                dayjs().isBefore(contractDateToPermitUse.add(12, 'month'))
+                dayjs().isSame(
+                    dayjs(contractDateToPermitUse).add(11, 'month')
+                ) ||
+                (dayjs().isAfter(contractDateToPermitUse.add(11, 'month')) &&
+                    dayjs().isBefore(contractDateToPermitUse.add(12, 'month')))
             ) {
                 // TODO: Enviar email para o gestor e para o funcionário
-                console.log('Você está prestes a acumular período de férias!')
+                // TODO: Gerar Modal avisando!
+                //Você está prestes a acumular período de férias!
+                setOpenModal(true)
+                ;(async function () {
+                    await api.patch(
+                        `/employees/${data.id}`,
+                        {
+                            vacationStatus: 'Delayed',
+                        },
+                        {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                        }
+                    )
+                })()
             }
         }
     }
@@ -166,7 +311,7 @@ const Home = () => {
             prev.createdAt > current.createdAt ? prev : current
         )
 
-        if (userData.id) {
+        if (data.id) {
             if (
                 dayjs(lastApprovedSchedule.start).isSame(dayjs()) ||
                 (dayjs().isAfter(dayjs(lastApprovedSchedule.start)) &&
@@ -174,9 +319,9 @@ const Home = () => {
             ) {
                 ;(async function () {
                     await api.patch(
-                        `/employees/${userData.id}`,
+                        `/employees/${data.id}`,
                         {
-                            vacationStatus: true,
+                            vacationStatus: 'Vacation',
                         },
                         {
                             headers: {
@@ -188,9 +333,9 @@ const Home = () => {
             } else {
                 ;(async function () {
                     const response = await api.patch(
-                        `/employees/${userData.id}`,
+                        `/employees/${data.id}`,
                         {
-                            vacationStatus: false,
+                            vacationStatus: 'Working',
                         },
                         {
                             headers: {
@@ -214,10 +359,27 @@ const Home = () => {
 
         if (lastApprovedScheduleEndDate.isBefore(periodoAquisitivo)) {
             if (
-                dayjs().isAfter(periodoAquisitivo.add(11, 'month')) &&
-                dayjs().isBefore(periodoAquisitivo.add(12, 'month'))
+                dayjs().isSame(periodoAquisitivo.add(11, 'month')) ||
+                (dayjs().isAfter(periodoAquisitivo.add(11, 'month')) &&
+                    dayjs().isBefore(periodoAquisitivo.add(12, 'month')))
             ) {
                 // TODO: Enviar email para o gestor e para o funcionário
+                // TODO: Enviar Modal
+                //Você está prestes a acumular período de férias!
+                setOpenModal(true)
+                ;(async function () {
+                    await api.patch(
+                        `/employees/${data.id}`,
+                        {
+                            vacationStatus: 'Delayed',
+                        },
+                        {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                        }
+                    )
+                })()
                 ;(async function () {
                     if (userData.idManager) {
                         try {
@@ -247,7 +409,35 @@ const Home = () => {
         }
     }
 
-    return <h1>Home</h1>
+    // Fazer a verificação do gestor para ver se os funcionários tiraram férias nos últimos 11 meses
+    return (
+        <>
+            <DefaultTitle
+                sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                }}
+            >
+                Home
+            </DefaultTitle>
+            <DefaultModal
+                isOpen={openModal}
+                closeModal={handleClose}
+                rejectText="Fechar"
+                approveText="Ir até solicitações"
+                handleApproval={() => {
+                    navigate('/home/solicitar')
+                }}
+            >
+                <Typography variant="h6" component="h2" paddingBottom="1rem">
+                    Você está com período de férias atrasado! Faça a sua
+                    solicitação!
+                </Typography>
+            </DefaultModal>
+        </>
+    )
 }
 
 export default Home

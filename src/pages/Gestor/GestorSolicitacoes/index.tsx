@@ -15,7 +15,8 @@ import { useUserDataStore } from '../../../store/useUserData'
 import { getAuthToken } from '../../../util/auth'
 import api from '../../../services/api'
 import Solicitacao from './Solicitacao'
-import { EmployeeScheduleType } from '../../../types/types'
+import { EmployeeScheduleType, UserLoaderDataType } from '../../../types/types'
+import { useRouteLoaderData } from 'react-router-dom'
 
 const GestorSolicitacoes = () => {
     const [open, setOpen] = useState(false)
@@ -27,6 +28,13 @@ const GestorSolicitacoes = () => {
         EmployeeScheduleType[]
     >([])
     const [selectedSchedule, setSelectedSchedule] = useState<any>()
+    const verifiedTokenData = useRouteLoaderData(
+        'rootHome'
+    ) as UserLoaderDataType
+    const data = localStorage.getItem('user')
+        ? JSON.parse(localStorage.getItem('user') as string)
+        : verifiedTokenData.id
+    const [loading, setLoading] = useState(false)
 
     const handleOpen = (schedule: any) => {
         setSelectedSchedule(schedule)
@@ -38,10 +46,11 @@ const GestorSolicitacoes = () => {
     }
 
     useEffect(() => {
-        if (userData.id) {
+        if (data.id) {
+            setLoading(true)
             ;(async () => {
                 const response = await api.get(
-                    `/employees/manager/${userData.id}/schedules/all`,
+                    `/employees/manager/${data.id}/schedules/all`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -55,11 +64,12 @@ const GestorSolicitacoes = () => {
                     }
                 )
                 setEmployeesWithSchedules(filteredEmployeeSchedules)
+                setLoading(false)
             })()
         }
-    }, [userData, setEmployeesWithSchedules])
+    }, [])
 
-    if (!userData.id) {
+    if (loading) {
         return (
             <Box
                 sx={{

@@ -1,41 +1,19 @@
 import { Box, Typography, Divider } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useRouteLoaderData } from 'react-router-dom'
 import DefaultButton from '../../../../components/DefaultButton'
 import DefaultCard from '../../../../components/DefaultCard'
 import DefaultTitle from '../../../../components/DefaultTitle'
 import api from '../../../../services/api'
 import { useUserDataStore } from '../../../../store/useUserData'
-import { EmployeeScheduleType } from '../../../../types/types'
+import { UserLoaderDataType } from '../../../../types/types'
 import { getAuthToken } from '../../../../util/auth'
 
-const CardNotificações = () => {
-    const token = getAuthToken()
-    const [notificationsCount, setNotificationsCount] = useState(0)
-    const userData = useUserDataStore((state: any) => state.userData)
+type CardNotificacoesProps = {
+    notificationsCount: number
+}
 
-    useEffect(() => {
-        if (userData.id) {
-            ;(async () => {
-                const { data } = await api.get(
-                    `/employees/manager/${userData.id}/schedules/Pending`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                )
-                const schedules = data.map((employee: EmployeeScheduleType) => {
-                    return employee.schedules.map((schedule) => schedule)
-                })
-
-                const flattenSchedules = schedules.flat()
-
-                setNotificationsCount(flattenSchedules.length)
-            })()
-        }
-    }, [userData])
-
+const CardNotificações = ({ notificationsCount }: CardNotificacoesProps) => {
     return (
         <Box>
             <DefaultTitle>Suas Notificações</DefaultTitle>

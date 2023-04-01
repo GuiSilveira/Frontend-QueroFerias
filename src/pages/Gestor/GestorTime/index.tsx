@@ -16,6 +16,8 @@ import { useUserDataStore } from '../../../store/useUserData'
 import { getAuthToken } from '../../../util/auth'
 import api from '../../../services/api'
 import SearchBar from '../../../components/SearchBar'
+import { UserLoaderDataType } from '../../../types/types'
+import { useRouteLoaderData } from 'react-router-dom'
 
 const GestorTime = () => {
     const token = getAuthToken()
@@ -24,12 +26,22 @@ const GestorTime = () => {
     const [employeesWithoutManager, setEmployeesWithoutManager] = useState<any>(
         []
     )
+    const verifiedTokenData = useRouteLoaderData(
+        'rootHome'
+    ) as UserLoaderDataType
+    const data = localStorage.getItem('user')
+        ? JSON.parse(localStorage.getItem('user') as string)
+        : verifiedTokenData.id
+    const [loading, setLoading] = useState(false)
+    const [loadingEmployeesWithoutManager, setLoadingEmployeesWithoutManager] =
+        useState(false)
 
     useEffect(() => {
-        if (userData.id) {
+        if (data.id) {
+            setLoading(true)
             ;(async () => {
                 const response = await api.get(
-                    `/employees/manager/${userData.id}`,
+                    `/employees/manager/${data.id}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -37,13 +49,16 @@ const GestorTime = () => {
                     }
                 )
 
+                console.log(response.data)
                 setManagerEmployees(response.data)
+                setLoading(false)
             })()
         }
-    }, [userData])
+    }, [])
 
     useEffect(() => {
         ;(async () => {
+            setLoadingEmployeesWithoutManager(true)
             const response = await api.get(
                 '/employees/manager/employees-without-manager',
                 {
@@ -54,10 +69,11 @@ const GestorTime = () => {
             )
 
             setEmployeesWithoutManager(response.data)
+            setLoadingEmployeesWithoutManager(false)
         })()
     }, [])
 
-    if (!userData.id) {
+    if (loading || loadingEmployeesWithoutManager) {
         return (
             <Box
                 sx={{
@@ -168,14 +184,22 @@ const GestorTime = () => {
                                                 </Typography>
                                                 <CardBoldTitleWithStatus
                                                     color={
-                                                        employee.vacationStatus
+                                                        employee.vacationStatus ===
+                                                        'Vacation'
                                                             ? 'warning.main'
-                                                            : 'primary'
+                                                            : employee.vacationStatus ===
+                                                              'Working'
+                                                            ? 'primary'
+                                                            : 'grey.500'
                                                     }
                                                 >
-                                                    {employee.vacationStatus
+                                                    {employee.vacationStatus ===
+                                                    'Vacation'
                                                         ? 'De Férias'
-                                                        : 'Trabalhando'}
+                                                        : employee.vacationStatus ===
+                                                          'Working'
+                                                        ? 'Trabalhando'
+                                                        : 'Atraso'}
                                                 </CardBoldTitleWithStatus>
                                             </Box>
                                         </Box>
