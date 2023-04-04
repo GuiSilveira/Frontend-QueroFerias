@@ -1,46 +1,38 @@
 import {
     Avatar,
     Box,
-    Button,
+    CircularProgress,
     Container,
     List,
     ListItem,
     Stack,
     Typography,
 } from '@mui/material'
-import { useState } from 'react'
 import DefaultCard from '../../components/DefaultCard'
-import DefaultInput from '../../components/DefaultInput'
-import DefaultModal from '../../components/DefaultModal'
 import DefaultTitle from '../../components/DefaultTitle'
-import api from '../../services/api'
 import { useUserDataStore } from '../../store/useUserData'
 
 const Profile = () => {
-    // const [open, setOpen] = useState(false)
-    // const [focusPassword, setFocusPassword] = useState<boolean>(false)
-    // const [password, setPassword] = useState<string>('')
     const userData = useUserDataStore((state: any) => state.userData)
-
-    // const handleOpen = () => {
-    //     setOpen(true)
-    // }
-    // const handleClose = () => {
-    //     setOpen(false)
-    // }
 
     if (!userData.id) {
         return (
-            <DefaultTitle
+            <Box
                 sx={{
                     position: 'absolute',
                     top: '50%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '1rem',
                 }}
             >
-                Carregando...
-            </DefaultTitle>
+                <DefaultTitle>Carregando...</DefaultTitle>
+                <CircularProgress color="success" />
+            </Box>
         )
     }
 

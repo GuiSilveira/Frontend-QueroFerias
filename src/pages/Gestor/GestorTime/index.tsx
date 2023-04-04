@@ -1,6 +1,7 @@
 import {
     Avatar,
     Box,
+    CircularProgress,
     Container,
     List,
     ListItem,
@@ -77,13 +78,19 @@ const GestorTime = () => {
         return (
             <Box
                 sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
                     display: 'flex',
-                    justifyContent: 'center',
+                    flexDirection: 'column',
                     alignItems: 'center',
-                    height: '100vh',
+                    justifyContent: 'center',
+                    gap: '1rem',
                 }}
             >
-                <Typography variant="h4">Carregando...</Typography>
+                <DefaultTitle>Carregando...</DefaultTitle>
+                <CircularProgress color="success" />
             </Box>
         )
     }

@@ -1,4 +1,10 @@
-import { Box, Container, SelectChangeEvent, Typography } from '@mui/material'
+import {
+    Box,
+    CircularProgress,
+    Container,
+    SelectChangeEvent,
+    Typography,
+} from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useRouteLoaderData } from 'react-router-dom'
 import CardBoldTitle from '../../../components/CardBoldTitle'
@@ -62,16 +68,22 @@ const FuncionarioSolicitacoes = () => {
 
     if (loading) {
         return (
-            <DefaultTitle
+            <Box
                 sx={{
                     position: 'absolute',
                     top: '50%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '1rem',
                 }}
             >
-                Carregando...
-            </DefaultTitle>
+                <DefaultTitle>Carregando...</DefaultTitle>
+                <CircularProgress color="success" />
+            </Box>
         )
     }
 

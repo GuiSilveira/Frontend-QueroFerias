@@ -6,6 +6,7 @@ import api from '../../services/api'
 import { useUserDataStore } from '../../store/useUserData'
 import { UserLoaderDataType } from '../../types/types'
 import { getAuthToken } from '../../util/auth'
+import { Box, CircularProgress } from '@mui/material'
 
 const RootHome = () => {
     const verifiedTokenData = useRouteLoaderData(
@@ -34,16 +35,22 @@ const RootHome = () => {
 
     if (loading) {
         return (
-            <DefaultTitle
+            <Box
                 sx={{
                     position: 'absolute',
                     top: '50%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '1rem',
                 }}
             >
-                Carregando...
-            </DefaultTitle>
+                <DefaultTitle>Carregando...</DefaultTitle>
+                <CircularProgress color="success" />
+            </Box>
         )
     }
 

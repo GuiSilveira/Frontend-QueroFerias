@@ -1,13 +1,8 @@
 import { Box, Typography, Divider } from '@mui/material'
-import { useEffect, useState } from 'react'
-import { Link, useRouteLoaderData } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import DefaultButton from '../../../../components/DefaultButton'
 import DefaultCard from '../../../../components/DefaultCard'
 import DefaultTitle from '../../../../components/DefaultTitle'
-import api from '../../../../services/api'
-import { useUserDataStore } from '../../../../store/useUserData'
-import { UserLoaderDataType } from '../../../../types/types'
-import { getAuthToken } from '../../../../util/auth'
 
 type CardNotificacoesProps = {
     notificationsCount: number

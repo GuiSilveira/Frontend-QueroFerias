@@ -7,9 +7,6 @@ import RoundedCornerContainer from '../../components/RoundedCornerContainer'
 import DefaultContainer from '../../components/DefaultContainer'
 import { ActionFunctionArgs, Form, redirect } from 'react-router-dom'
 import api from '../../services/api'
-import { useUserDataStore } from '../../store/useUserData'
-import { UserState } from '../../types/types'
-import { checkAuthLoader } from '../../util/auth'
 
 const Login = () => {
     const [focusMatricula, setFocusMatricula] = useState<boolean>(false)

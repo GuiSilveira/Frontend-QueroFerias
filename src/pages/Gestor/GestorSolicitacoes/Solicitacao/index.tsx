@@ -1,16 +1,16 @@
 import { ListItem, Stack, Box, Typography } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
 import CardBoldTitle from '../../../../components/CardBoldTitle'
 import CardBoldTitleWithStatus from '../../../../components/CardBoldTitleWithStatus'
 import CustomButton from '../../../../components/CustomButton'
 import DefaultCard from '../../../../components/DefaultCard'
 import api from '../../../../services/api'
 import { EmployeeScheduleType, ScheduleType } from '../../../../types/types'
+import axios from 'axios'
 
 type SolicitacaoProps = {
     schedule: ScheduleType
     employee: EmployeeScheduleType
-    handleOpen: () => void
+    handleOpen: (schedule: ScheduleType) => void
     setEmployeesWithSchedule: Function
     employeesWithSchedule: EmployeeScheduleType[]
 }
@@ -66,7 +66,11 @@ function Solicitacao({
                                     : 'warning.main'
                             }
                         >
-                            {schedule.status}
+                            {schedule.status === 'Pending'
+                                ? 'Pendente'
+                                : schedule.status === 'Approved'
+                                ? 'Aprovado'
+                                : 'Recusado'}
                         </CardBoldTitleWithStatus>
                     </Box>
                     {schedule.status === 'Pending' && (
@@ -119,6 +123,44 @@ function Solicitacao({
                                     setEmployeesWithSchedule(
                                         newEmployeesWithSchedule
                                     )
+
+                                    if (response.data) {
+                                        const emailResponse = await axios.post(
+                                            'http://localhost:8000/enviar_mensagem',
+                                            {
+                                                email: {
+                                                    assunto: `Aprovação de férias!`,
+                                                    mensagem: `Olá, seu gestor aprovou suas férias de ${schedule.start.slice(
+                                                        0,
+                                                        10
+                                                    )} até ${schedule.end.slice(
+                                                        0,
+                                                        10
+                                                    )}`,
+                                                    destinatario:
+                                                        'guisilveira.cout@gmail.com',
+                                                },
+                                                msgWorkplace: {
+                                                    id: 100089487301073,
+                                                    mensagem: `Aprovação de férias! Olá, seu gestor aprovou suas férias de ${schedule.start.slice(
+                                                        0,
+                                                        10
+                                                    )} até ${schedule.end.slice(
+                                                        0,
+                                                        10
+                                                    )}`,
+                                                },
+                                            }
+                                        )
+
+                                        if (!emailResponse) {
+                                            throw new Error(
+                                                'Erro ao enviar email'
+                                            )
+                                        }
+
+                                        console.log(emailResponse.data)
+                                    }
                                 }}
                             >
                                 Aceitar
@@ -127,7 +169,7 @@ function Solicitacao({
                                 type="reject"
                                 startIcon={true}
                                 variant="outlined"
-                                onClick={() => handleOpen()}
+                                onClick={() => handleOpen(schedule)}
                             >
                                 Recusar
                             </CustomButton>

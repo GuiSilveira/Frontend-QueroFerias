@@ -1,4 +1,4 @@
-import { Box, Container, Stack } from '@mui/material'
+import { Box, CircularProgress, Container, Stack } from '@mui/material'
 import CardNotificações from './CardNotificações'
 import CardTime from './CardTime'
 import CardCalendario from './CardCalendario'
@@ -190,16 +190,22 @@ const GestorDashboard = () => {
         loadingAllTimeApprovedSchedules
     ) {
         return (
-            <DefaultTitle
+            <Box
                 sx={{
                     position: 'absolute',
                     top: '50%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '1rem',
                 }}
             >
-                Carregando...
-            </DefaultTitle>
+                <DefaultTitle>Carregando...</DefaultTitle>
+                <CircularProgress color="success" />
+            </Box>
         )
     }
 

@@ -1,5 +1,6 @@
 import {
     Box,
+    CircularProgress,
     Container,
     List,
     SelectChangeEvent,
@@ -17,13 +18,13 @@ import api from '../../../services/api'
 import Solicitacao from './Solicitacao'
 import { EmployeeScheduleType, UserLoaderDataType } from '../../../types/types'
 import { useRouteLoaderData } from 'react-router-dom'
+import axios from 'axios'
 
 const GestorSolicitacoes = () => {
     const [open, setOpen] = useState(false)
     const token = getAuthToken()
     const [mensagemGestor, setMensagemGestor] = useState<string | null>(null)
     const [filter, setFilter] = useState<string>('Todas')
-    const userData = useUserDataStore((state: any) => state.userData)
     const [employeesWithSchedules, setEmployeesWithSchedules] = useState<
         EmployeeScheduleType[]
     >([])
@@ -38,7 +39,6 @@ const GestorSolicitacoes = () => {
 
     const handleOpen = (schedule: any) => {
         setSelectedSchedule(schedule)
-        console.log(selectedSchedule)
         setOpen(true)
     }
     const handleClose = () => {
@@ -73,13 +73,19 @@ const GestorSolicitacoes = () => {
         return (
             <Box
                 sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
                     display: 'flex',
-                    justifyContent: 'center',
+                    flexDirection: 'column',
                     alignItems: 'center',
-                    height: '100vh',
+                    justifyContent: 'center',
+                    gap: '1rem',
                 }}
             >
-                <Typography variant="h4">Carregando...</Typography>
+                <DefaultTitle>Carregando...</DefaultTitle>
+                <CircularProgress color="success" />
             </Box>
         )
     }
@@ -274,44 +280,83 @@ const GestorSolicitacoes = () => {
                     isOpen={open}
                     closeModal={handleClose}
                     handleApproval={async () => {
-                        const response = await api.patch(
-                            `/schedules/${selectedSchedule.id}`,
-                            {
-                                status: 'Rejected',
-                            }
-                        )
-
-                        if (!response) {
-                            throw new Error('Erro ao rejeitar')
-                        }
-
-                        const newEmployeesWithSchedule =
-                            employeesWithSchedules.map((employee) => {
-                                if (
-                                    employee.id === selectedSchedule.idEmployee
-                                ) {
-                                    employee.schedules.map(
-                                        (employeeSchedule) => {
-                                            if (
-                                                selectedSchedule.id ===
-                                                employeeSchedule.id
-                                            ) {
-                                                employeeSchedule.status =
-                                                    'Rejected'
-                                                console.log(employeeSchedule)
-                                            }
-
-                                            return employeeSchedule
-                                        }
-                                    )
+                        if (selectedSchedule) {
+                            const response = await api.patch(
+                                `/schedules/${selectedSchedule.id}`,
+                                {
+                                    status: 'Rejected',
                                 }
+                            )
 
-                                return employee
-                            })
+                            if (!response) {
+                                throw new Error('Erro ao rejeitar')
+                            }
 
-                        setEmployeesWithSchedules(newEmployeesWithSchedule)
-                        setMensagemGestor('')
-                        handleClose()
+                            if (response.status === 200) {
+                                const emailResponse = await axios.post(
+                                    'http://localhost:8000/enviar_mensagem',
+                                    {
+                                        email: {
+                                            assunto: `Reprovação de férias`,
+                                            mensagem: `Olá, seu gestor reprovou suas férias de ${selectedSchedule.startDate.slice(
+                                                0,
+                                                10
+                                            )} até ${selectedSchedule.endDate.slice(
+                                                0,
+                                                10
+                                            )} por conta de: ${
+                                                mensagemGestor
+                                                    ? mensagemGestor
+                                                    : 'Não informado'
+                                            }`,
+                                            destinatario:
+                                                'guisilveira.cout@gmail.com',
+                                        },
+                                        msgWorkplace: {
+                                            id: 100089487301073,
+                                            mensagem: `Aprovação de férias! Olá, seu gestor aprovou suas férias de ${selectedSchedule.startDate.slice(
+                                                0,
+                                                10
+                                            )} até ${selectedSchedule.endDate.slice(
+                                                0,
+                                                10
+                                            )}`,
+                                        },
+                                    }
+                                )
+                            }
+
+                            const newEmployeesWithSchedule =
+                                employeesWithSchedules.map((employee) => {
+                                    if (
+                                        employee.id ===
+                                        selectedSchedule.idEmployee
+                                    ) {
+                                        employee.schedules.map(
+                                            (employeeSchedule) => {
+                                                if (
+                                                    selectedSchedule.id ===
+                                                    employeeSchedule.id
+                                                ) {
+                                                    employeeSchedule.status =
+                                                        'Rejected'
+                                                    console.log(
+                                                        employeeSchedule
+                                                    )
+                                                }
+
+                                                return employeeSchedule
+                                            }
+                                        )
+                                    }
+
+                                    return employee
+                                })
+
+                            setEmployeesWithSchedules(newEmployeesWithSchedule)
+                            setMensagemGestor('')
+                            handleClose()
+                        }
                     }}
                     approveText={'Enviar'}
                     rejectText={'Cancelar'}

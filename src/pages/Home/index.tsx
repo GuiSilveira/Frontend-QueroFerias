@@ -6,8 +6,9 @@ import api, { emailApi } from '../../services/api'
 import { useUserDataStore } from '../../store/useUserData'
 import { ScheduleType, UserLoaderDataType } from '../../types/types'
 import { getAuthToken } from '../../util/auth'
-import { Typography } from '@mui/material'
+import { Box, CircularProgress, Typography } from '@mui/material'
 import DefaultModal from '../../components/DefaultModal'
+import axios from 'axios'
 
 const Home = () => {
     const token = getAuthToken()
@@ -150,16 +151,22 @@ const Home = () => {
         loadingSearchedUserData
     ) {
         return (
-            <DefaultTitle
+            <Box
                 sx={{
                     position: 'absolute',
                     top: '50%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '1rem',
                 }}
             >
-                Carregando...
-            </DefaultTitle>
+                <DefaultTitle>Carregando...</DefaultTitle>
+                <CircularProgress color="success" />
+            </Box>
         )
     }
 
@@ -209,6 +216,32 @@ const Home = () => {
                             },
                         }
                     )
+                })()
+                ;(async function () {
+                    await axios.post(`http://127.0.0.1:8000/enviar_mensagem`, {
+                        email: {
+                            assunto: `Atraso nas férias!`,
+                            mensagem: `Olá, você precisa tirar férias, pois as suas estão atrasadas! Não deixe com que suas férias vençam, tire suas férias imediatamente e saia do atraso!`,
+                            destinatario: 'guisilveira.cout@gmail.com',
+                        },
+                        msgWorkplace: {
+                            id: 100089487301073,
+                            mensagem:
+                                'Não deixe com que suas férias vençam, tire suas férias imediatamente e saia do atraso!',
+                        },
+                    })
+
+                    await axios.post(`http://127.0.0.1:8000/enviar_mensagem`, {
+                        email: {
+                            assunto: `Atraso nas férias!`,
+                            mensagem: `Seu funcionário ${employee.name} precisa tirar férias, pois estão atrasadas! Não deixe com que as férias vençam!`,
+                            destinatario: 'guisilveira.cout@gmail.com',
+                        },
+                        msgWorkplace: {
+                            id: 100089487301073,
+                            mensagem: `Não deixe com que as férias do seu funcionário ${employee.name} vençam! Ele precisa sair do atraso!`,
+                        },
+                    })
                 })()
             }
         })
@@ -280,10 +313,36 @@ const Home = () => {
                 (dayjs().isAfter(contractDateToPermitUse.add(11, 'month')) &&
                     dayjs().isBefore(contractDateToPermitUse.add(12, 'month')))
             ) {
-                // TODO: Enviar email para o gestor e para o funcionário
-                // TODO: Gerar Modal avisando!
+                // TODO: Enviar email para o gestor e para o funcionário ok
+                // TODO: Gerar Modal avisando! ok
                 //Você está prestes a acumular período de férias!
                 setOpenModal(true)
+                ;(async function () {
+                    await axios.post(`http://127.0.0.1:8000/enviar_mensagem`, {
+                        email: {
+                            assunto: `Atraso nas férias!`,
+                            mensagem: `Olá, você precisa tirar férias, pois as suas estão atrasadas! Não deixe com que suas férias vençam, tire suas férias imediatamente e saia do atraso!`,
+                            destinatario: 'guisilveira.cout@gmail.com',
+                        },
+                        msgWorkplace: {
+                            id: 100089487301073,
+                            mensagem:
+                                'Não deixe com que suas férias vençam, tire suas férias imediatamente e saia do atraso!',
+                        },
+                    })
+
+                    await axios.post(`http://127.0.0.1:8000/enviar_mensagem`, {
+                        email: {
+                            assunto: `Atraso nas férias!`,
+                            mensagem: `Seu funcionário ${userData.name} precisa tirar férias, pois estão atrasadas! Não deixe com que as férias vençam!`,
+                            destinatario: 'guisilveira.cout@gmail.com',
+                        },
+                        msgWorkplace: {
+                            id: 100089487301073,
+                            mensagem: `Não deixe com que as férias do seu funcionário ${userData.name} vençam! Ele precisa sair do atraso!`,
+                        },
+                    })
+                })()
                 ;(async function () {
                     await api.patch(
                         `/employees/${data.id}`,
@@ -367,6 +426,32 @@ const Home = () => {
                 // TODO: Enviar Modal
                 //Você está prestes a acumular período de férias!
                 setOpenModal(true)
+                ;(async function () {
+                    await axios.post(`http://127.0.0.1:8000/enviar_mensagem`, {
+                        email: {
+                            assunto: `Atraso nas férias!`,
+                            mensagem: `Olá, você precisa tirar férias, pois as suas estão atrasadas! Não deixe com que suas férias vençam, tire suas férias imediatamente e saia do atraso!`,
+                            destinatario: 'guisilveira.cout@gmail.com',
+                        },
+                        msgWorkplace: {
+                            id: 100089487301073,
+                            mensagem:
+                                'Não deixe com que suas férias vençam, tire suas férias imediatamente e saia do atraso!',
+                        },
+                    })
+
+                    await axios.post(`http://127.0.0.1:8000/enviar_mensagem`, {
+                        email: {
+                            assunto: `Atraso nas férias!`,
+                            mensagem: `Seu funcionário ${userData.name} precisa tirar férias, pois estão atrasadas! Não deixe com que as férias vençam!`,
+                            destinatario: 'guisilveira.cout@gmail.com',
+                        },
+                        msgWorkplace: {
+                            id: 100089487301073,
+                            mensagem: `Não deixe com que as férias do seu funcionário ${userData.name} vençam! Ele precisa sair do atraso!`,
+                        },
+                    })
+                })()
                 ;(async function () {
                     await api.patch(
                         `/employees/${data.id}`,

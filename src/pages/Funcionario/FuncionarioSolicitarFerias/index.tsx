@@ -1,4 +1,4 @@
-import { Box, Container, MenuItem } from '@mui/material'
+import { Box, CircularProgress, Container, MenuItem } from '@mui/material'
 import { DateField } from '@mui/x-date-pickers'
 import dayjs, { Dayjs } from 'dayjs'
 import { useState, useEffect } from 'react'
@@ -13,9 +13,10 @@ import api from '../../../services/api'
 import { useUserDataStore } from '../../../store/useUserData'
 import { ScheduleType } from '../../../types/types'
 import { getAuthToken } from '../../../util/auth'
+import axios from 'axios'
 
 const FuncionarioSolicitarFerias = () => {
-    const { id, idManager, contract, contractDate } = useUserDataStore(
+    const { id, idManager, contract, contractDate, name } = useUserDataStore(
         (state: any) => state.userData
     )
     const token = getAuthToken()
@@ -29,10 +30,12 @@ const FuncionarioSolicitarFerias = () => {
         string | null
     >(null)
     const [managers, setManagers] = useState<any>([])
+    const [employeeManager, setEmployeeManager] = useState<any | null>(null)
     const [pendingSchedule, setPendingSchedule] = useState<ScheduleType[]>([])
     const [disableButton, setDisableButton] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(false)
 
+    console.log(employeeManager)
     useEffect(() => {
         if (!idManager) {
             ;(async () => {
@@ -43,6 +46,16 @@ const FuncionarioSolicitarFerias = () => {
                 })
 
                 setManagers(response.data)
+            })()
+        } else {
+            ;(async () => {
+                const response = await api.get(`/employees/${idManager}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                })
+
+                setEmployeeManager(response.data)
             })()
         }
     }, [idManager])
@@ -68,16 +81,22 @@ const FuncionarioSolicitarFerias = () => {
 
     if (loading || !id) {
         return (
-            <DefaultTitle
+            <Box
                 sx={{
                     position: 'absolute',
                     top: '50%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '1rem',
                 }}
             >
-                Carregando...
-            </DefaultTitle>
+                <DefaultTitle>Carregando...</DefaultTitle>
+                <CircularProgress color="success" />
+            </Box>
         )
     }
 
@@ -185,6 +204,12 @@ const FuncionarioSolicitarFerias = () => {
                                             <MenuItem key="15" value="15">
                                                 15
                                             </MenuItem>
+                                            <MenuItem key="20" value="20">
+                                                20
+                                            </MenuItem>
+                                            <MenuItem key="30" value="30">
+                                                30
+                                            </MenuItem>
                                         </DefaultSelect>
                                         <DateField
                                             value={startDate}
@@ -255,6 +280,7 @@ const FuncionarioSolicitarFerias = () => {
                                             content={'Solicitar Férias'}
                                             type="submit"
                                             onClick={async () => {
+                                                // TODO: Try catch aqui para tratar errors
                                                 const { data } = await api.post(
                                                     '/schedules',
                                                     {
@@ -282,6 +308,27 @@ const FuncionarioSolicitarFerias = () => {
 
                                                 if (data) {
                                                     setDisableButton(true)
+                                                    const response =
+                                                        await axios.post(
+                                                            'http://localhost:8000/enviar_mensagem',
+                                                            {
+                                                                email: {
+                                                                    assunto: `Solicitação de Férias de ${name}`,
+                                                                    mensagem: `Olá, você recebeu uma solicitação de férias de ${name}. 
+                                                                    Data de início: ${startDate}
+                                                                    Data de término: ${endDate}
+                                                                    Dias de férias: ${diasFerias}
+                                                                    Mensagem do funcionário: ${mensagemFuncionario}
+                                                                    `,
+                                                                    destinatario:
+                                                                        'guisilveira.cout@gmail.com',
+                                                                },
+                                                                msgWorkplace: {
+                                                                    id: 100089487301073,
+                                                                    mensagem: `Nova Solicitação de Férias de ${name}`,
+                                                                },
+                                                            }
+                                                        )
                                                 }
                                             }}
                                         />

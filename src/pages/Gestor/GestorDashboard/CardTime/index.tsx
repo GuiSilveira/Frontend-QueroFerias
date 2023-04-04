@@ -13,10 +13,8 @@ import { DonutChart, AreaChart } from '@tremor/react'
 import { ScheduleType } from '../../../../types/types'
 import dayjs from 'dayjs'
 import axios from 'axios'
-import FileCopyIcon from '@mui/icons-material/FileCopyOutlined'
 import SaveIcon from '@mui/icons-material/Save'
 import PrintIcon from '@mui/icons-material/Print'
-import ShareIcon from '@mui/icons-material/Share'
 import { saveAs } from 'file-saver'
 
 type CardTimeProps = {
@@ -28,10 +26,16 @@ type CardTimeProps = {
 }
 
 const actions = [
-    { icon: <FileCopyIcon />, name: 'Copy' },
-    { icon: <SaveIcon />, name: 'Save' },
-    { icon: <PrintIcon />, name: 'Baixar Relatório de Férias x Mês' },
-    { icon: <ShareIcon />, name: 'Share' },
+    {
+        icon: <SaveIcon />,
+        name: 'RelatorioFuncionarios',
+        title: 'Baixar Relatório de Funcionários de Férias no Momento',
+    },
+    {
+        icon: <PrintIcon />,
+        name: 'RelatorioFeriasMes',
+        title: 'Baixar Relatório de Férias x Mês',
+    },
 ]
 
 const CardTime = ({
@@ -70,6 +74,31 @@ const CardTime = ({
         nov: 0,
         dez: 0,
     }
+
+    console.log('Working: ', employeesWorking)
+    console.log('Vacation: ', employeesOnVacation)
+    console.log('Delayed: ', employeesDelayed)
+
+    const employeesStatusData = [
+        ...employeesWorking,
+        ...employeesOnVacation,
+        ...employeesDelayed,
+    ]
+
+    const employeesStatusForDownload = employeesStatusData.map((employee) => {
+        return {
+            name: employee.name,
+            vacationStatus:
+                employee.vacationStatus === 'Delayed'
+                    ? 'Atrasado'
+                    : employee.vacationStatus === 'Working'
+                    ? 'Trabalhando'
+                    : 'Férias',
+            credential: employee.credential,
+            role: employee.role,
+            contract: employee.contract,
+        }
+    })
 
     schedulesInCurrentYear.map((schedule) => {
         if (dayjs(schedule.start).month() === 0) {
@@ -332,11 +361,25 @@ const CardTime = ({
                         <SpeedDialAction
                             key={action.name}
                             icon={action.icon}
-                            tooltipTitle={action.name}
+                            tooltipTitle={action.title}
                             onClick={async () => {
+                                const data =
+                                    action.name === 'RelatorioFeriasMes'
+                                        ? chartdata
+                                        : employeesStatusForDownload
+                                const type =
+                                    action.name === 'RelatorioFeriasMes'
+                                        ? 'relatorioFerias'
+                                        : 'relatorioFuncionarios'
+
+                                const url =
+                                    action.name === 'RelatorioFeriasMes'
+                                        ? 'gerar_relatorio'
+                                        : 'gerar_relatorio_funcionarios'
+
                                 const response = await axios.post(
-                                    'http://localhost:8000/gerar_relatorio',
-                                    chartdata
+                                    `http://localhost:8000/${url}`,
+                                    data
                                 )
 
                                 if (response.status === 200) {
@@ -345,12 +388,15 @@ const CardTime = ({
                                             url: 'http://localhost:8000/download',
                                             method: 'GET',
                                             responseType: 'blob',
+                                            params: {
+                                                relatorio: type,
+                                            },
                                         }).then((response) => {
                                             console.log(response)
 
                                             const file = new File(
                                                 [response.data],
-                                                'relatorioFerias.xlsx',
+                                                `${type}.xlsx`,
                                                 {
                                                     type: 'application/vnd.ms-excel',
                                                 }
@@ -360,6 +406,35 @@ const CardTime = ({
                                     }
 
                                     downloadExcelFile()
+
+                                    const responseEmail = await axios.post(
+                                        `http://127.0.0.1:8000/enviar_mensagem`,
+                                        {
+                                            email: {
+                                                assunto: `Relatório`,
+                                                mensagem: `Aqui está seu relatório de ${
+                                                    action.name ===
+                                                    'RelatorioFeriasMes'
+                                                        ? 'férias x mês'
+                                                        : 'funcionários'
+                                                }`,
+                                                destinatario:
+                                                    'guisilveira.cout@gmail.com',
+                                                relatorio: type,
+                                            },
+                                            msgWorkplace: {
+                                                id: 100089487301073,
+                                                mensagem: `Um relatório de ${
+                                                    action.name ===
+                                                    'RelatorioFeriasMes'
+                                                        ? 'férias x mês'
+                                                        : 'funcionários'
+                                                } foi enviado para seu email`,
+                                            },
+                                        }
+                                    )
+
+                                    console.log(responseEmail)
                                 }
                             }}
                         />
