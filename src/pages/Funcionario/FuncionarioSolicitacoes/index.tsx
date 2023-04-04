@@ -17,6 +17,7 @@ import DefaultTitle from '../../../components/DefaultTitle'
 import api from '../../../services/api'
 import { ScheduleType, UserLoaderDataType } from '../../../types/types'
 import { getAuthToken } from '../../../util/auth'
+import dayjs from 'dayjs'
 
 const FuncionarioSolicitacoes = () => {
     const token = getAuthToken()
@@ -163,8 +164,14 @@ const FuncionarioSolicitacoes = () => {
                                 <DefaultCard width="100%">
                                     <CardBoldTitle>Férias</CardBoldTitle>
                                     <Typography>
-                                        De {solicitacao.start.slice(0, 10)} até{' '}
-                                        {solicitacao.end.slice(0, 10)}
+                                        De{' '}
+                                        {dayjs(solicitacao.start.slice(0, 10))
+                                            .format('DD/MM/YYYY')
+                                            .toString()}{' '}
+                                        até{' '}
+                                        {dayjs(solicitacao.end.slice(0, 10))
+                                            .format('DD/MM/YYYY')
+                                            .toString()}
                                     </Typography>
                                     <CardBoldTitle>Mensagem</CardBoldTitle>
                                     <Typography>
@@ -180,7 +187,11 @@ const FuncionarioSolicitacoes = () => {
                                                 : 'warning.main'
                                         }
                                     >
-                                        {solicitacao.status}
+                                        {solicitacao.status === 'Pending'
+                                            ? 'Pendente'
+                                            : solicitacao.status === 'Approved'
+                                            ? 'Aprovado'
+                                            : 'Reprovado'}
                                     </CardBoldTitleWithStatus>
                                     {solicitacao.status === 'Rejected' ? (
                                         <DefaultButton
@@ -221,8 +232,14 @@ const FuncionarioSolicitacoes = () => {
             >
                 <CardBoldTitle>Férias</CardBoldTitle>
                 <Typography>
-                    De {solicitacaoSelecionada?.start.slice(0, 10)} até{' '}
-                    {solicitacaoSelecionada?.end.slice(0, 10)}
+                    De{' '}
+                    {dayjs(solicitacaoSelecionada?.start.slice(0, 10))
+                        .format('DD/MM/YYYY')
+                        .toString()}{' '}
+                    até{' '}
+                    {dayjs(solicitacaoSelecionada?.end.slice(0, 10))
+                        .format('DD/MM/YYYY')
+                        .toString()}
                 </Typography>
                 <CardBoldTitle>Motivo da Reprovação</CardBoldTitle>
                 <Typography marginBottom="1rem">

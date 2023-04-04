@@ -6,9 +6,18 @@ import api, { emailApi } from '../../services/api'
 import { useUserDataStore } from '../../store/useUserData'
 import { ScheduleType, UserLoaderDataType } from '../../types/types'
 import { getAuthToken } from '../../util/auth'
-import { Box, CircularProgress, Typography } from '@mui/material'
+import {
+    Box,
+    CircularProgress,
+    Container,
+    Stack,
+    Typography,
+} from '@mui/material'
 import DefaultModal from '../../components/DefaultModal'
 import axios from 'axios'
+import DefaultContainer from '../../components/DefaultContainer'
+import DefaultCard from '../../components/DefaultCard'
+import DefaultButton from '../../components/DefaultButton'
 
 const Home = () => {
     const token = getAuthToken()
@@ -495,18 +504,67 @@ const Home = () => {
     }
 
     // Fazer a verificação do gestor para ver se os funcionários tiraram férias nos últimos 11 meses
+
+    const actions = [
+        'Solicitar Férias',
+        'Todas as Solicitações',
+        'Solicitações Gestor',
+        'Time Gestor',
+        'Perfil',
+        'Dashboard',
+    ]
+
     return (
         <>
-            <DefaultTitle
+            <Container
                 sx={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
+                    marginTop: '5rem',
+                    marginLeft: {
+                        md: '240px',
+                    },
+                    marginBottom: {
+                        xs: '2rem',
+                        md: '0',
+                    },
                 }}
             >
-                Home
-            </DefaultTitle>
+                <DefaultTitle>{`Seja bem-vindo, ${userData.name}! Comece a navegar por aqui!`}</DefaultTitle>
+                <Stack
+                    gap={2}
+                    marginTop={2}
+                    flexDirection={{
+                        xs: 'column',
+                        md: 'row',
+                    }}
+                    maxWidth={{
+                        sm: '75%',
+                        md: 'none',
+                    }}
+                    marginX={{
+                        sm: 'auto',
+                        md: '0',
+                    }}
+                    flexWrap="wrap"
+                >
+                    {actions.map((action) => {
+                        if (
+                            userData.position === 'Employee' &&
+                            (action === 'Solicitações Gestor' ||
+                                action === 'Time Gestor' ||
+                                action === 'Dashboard')
+                        )
+                            return null
+
+                        console.log(action)
+                        return (
+                            <DefaultCard>
+                                <DefaultTitle>{action}</DefaultTitle>
+                                <DefaultButton content={`Visitar ${action}`} />
+                            </DefaultCard>
+                        )
+                    })}
+                </Stack>
+            </Container>
             <DefaultModal
                 isOpen={openModal}
                 closeModal={handleClose}

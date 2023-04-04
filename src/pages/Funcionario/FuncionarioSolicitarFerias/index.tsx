@@ -1,8 +1,15 @@
-import { Box, CircularProgress, Container, MenuItem } from '@mui/material'
+import {
+    Box,
+    CircularProgress,
+    Container,
+    Divider,
+    MenuItem,
+    Typography,
+} from '@mui/material'
 import { DateField } from '@mui/x-date-pickers'
 import dayjs, { Dayjs } from 'dayjs'
 import { useState, useEffect } from 'react'
-import { Form } from 'react-router-dom'
+import { Form, Link } from 'react-router-dom'
 import DefaultButton from '../../../components/DefaultButton'
 import DefaultCard from '../../../components/DefaultCard'
 import DefaultSelect from '../../../components/DefaultSelect'
@@ -34,11 +41,17 @@ const FuncionarioSolicitarFerias = () => {
     const [pendingSchedule, setPendingSchedule] = useState<ScheduleType[]>([])
     const [disableButton, setDisableButton] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(false)
+    const [loadingApprovedSchedules, setLoadingApprovedSchedules] =
+        useState<boolean>(false)
+    const [loadingManager, setLoadingManager] = useState<boolean>(false)
+    const [daysRemaining, setDaysRemaining] = useState<number>(30)
+    const periodoAquisitivo = dayjs(contractDate).year(dayjs().year())
+    const periodoAquisitivoFinal = dayjs(periodoAquisitivo).add(1, 'year')
 
-    console.log(employeeManager)
     useEffect(() => {
         if (!idManager) {
             ;(async () => {
+                setLoadingManager(true)
                 const response = await api.get('/employees/managers', {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -46,9 +59,11 @@ const FuncionarioSolicitarFerias = () => {
                 })
 
                 setManagers(response.data)
+                setLoadingManager(false)
             })()
         } else {
             ;(async () => {
+                setLoadingManager(true)
                 const response = await api.get(`/employees/${idManager}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -56,6 +71,7 @@ const FuncionarioSolicitarFerias = () => {
                 })
 
                 setEmployeeManager(response.data)
+                setLoadingManager(false)
             })()
         }
     }, [idManager])
@@ -79,7 +95,55 @@ const FuncionarioSolicitarFerias = () => {
         }
     }, [id])
 
-    if (loading || !id) {
+    // Funcionários férias aprovadas no período aquisitivo atual
+    useEffect(() => {
+        if (id) {
+            ;(async () => {
+                setLoadingApprovedSchedules(true)
+                const { data } = await api.get(`/employees/${id}/schedules`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                })
+
+                const approvedSchedules = data.filter(
+                    (schedule: ScheduleType) => schedule.status === 'Approved'
+                )
+
+                const approvedSchedulesInCurrentPeriod =
+                    approvedSchedules.filter((schedule: ScheduleType) => {
+                        const scheduleStartDate = dayjs(schedule.start)
+                        const scheduleEndDate = dayjs(schedule.end)
+
+                        return (
+                            (scheduleStartDate.isSame(periodoAquisitivo) ||
+                                scheduleStartDate.isAfter(periodoAquisitivo)) &&
+                            scheduleEndDate.isBefore(periodoAquisitivoFinal)
+                        )
+                    })
+
+                const daysApproved = approvedSchedulesInCurrentPeriod.reduce(
+                    (acc: number, schedule: ScheduleType) => {
+                        const scheduleStartDate = dayjs(schedule.start)
+                        const scheduleEndDate = dayjs(schedule.end)
+
+                        const days = scheduleEndDate.diff(
+                            scheduleStartDate,
+                            'day'
+                        )
+
+                        return acc + days
+                    },
+                    0
+                )
+
+                setDaysRemaining(30 - daysApproved)
+                setLoadingApprovedSchedules(false)
+            })()
+        }
+    }, [id])
+
+    if (loading || loadingApprovedSchedules || loadingManager || !id) {
         return (
             <Box
                 sx={{
@@ -173,6 +237,46 @@ const FuncionarioSolicitarFerias = () => {
                         </DefaultTitle>
                         {idManager ? (
                             <>
+                                <Box
+                                    sx={{
+                                        marginBottom: '1rem',
+                                    }}
+                                >
+                                    <DefaultCard
+                                        width={{
+                                            xs: 'calc(100vw - 2rem)',
+                                            md: '300px',
+                                            lg: '100%',
+                                        }}
+                                    >
+                                        <Typography
+                                            fontWeight="medium"
+                                            color="grey.500"
+                                        >
+                                            Dias de férias disponíveis
+                                        </Typography>
+                                        <Divider />
+                                        <Typography marginTop="5px">
+                                            Você possui
+                                        </Typography>
+                                        <Typography
+                                            color="primary.main"
+                                            fontWeight="bold"
+                                            fontSize="50px"
+                                        >
+                                            {daysRemaining}
+                                        </Typography>
+                                        <Typography>
+                                            dias de férias disponíveis no
+                                            período aquisitivo atual que vai de
+                                            {` ${periodoAquisitivo.format(
+                                                'DD/MM/YYYY'
+                                            )} a ${periodoAquisitivoFinal.format(
+                                                'DD/MM/YYYY'
+                                            )}`}
+                                        </Typography>
+                                    </DefaultCard>
+                                </Box>
                                 <DefaultCard
                                     minWidth={{
                                         xs: 'calc(100vw - 2rem)',
@@ -218,7 +322,7 @@ const FuncionarioSolicitarFerias = () => {
                                             }
                                             name="start"
                                             label="Data de Início"
-                                            format="YYYY-MM-DD"
+                                            format="DD-MM-YYYY"
                                             sx={{
                                                 width: '100%',
                                                 margin: '20px 0',
@@ -231,7 +335,7 @@ const FuncionarioSolicitarFerias = () => {
                                             }
                                             name="end"
                                             label="Data de Término"
-                                            format="YYYY-MM-DD"
+                                            format="DD-MM-YYYY"
                                             sx={{
                                                 width: '100%',
                                             }}
@@ -285,8 +389,12 @@ const FuncionarioSolicitarFerias = () => {
                                                     '/schedules',
                                                     {
                                                         idEmployee: String(id),
-                                                        start: startDate,
-                                                        end: endDate,
+                                                        start: startDate?.format(
+                                                            'YYYY-MM-DD'
+                                                        ),
+                                                        end: endDate?.format(
+                                                            'YYYY-MM-DD'
+                                                        ),
                                                         anticipateSalary:
                                                             anticipateSalary ===
                                                             'sim'

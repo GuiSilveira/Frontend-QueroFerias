@@ -6,6 +6,7 @@ import DefaultCard from '../../../../components/DefaultCard'
 import api from '../../../../services/api'
 import { EmployeeScheduleType, ScheduleType } from '../../../../types/types'
 import axios from 'axios'
+import dayjs from 'dayjs'
 
 type SolicitacaoProps = {
     schedule: ScheduleType
@@ -45,11 +46,19 @@ function Solicitacao({
                         <Typography>{employee.name}</Typography>
                         <CardBoldTitle>Férias</CardBoldTitle>
                         <Typography>
-                            {`De ${schedule.start.slice(0, 10)} até
-                                                                ${schedule.end.slice(
-                                                                    0,
-                                                                    10
-                                                                )}`}
+                            {`De ${dayjs(schedule.start.slice(0, 10))
+                                .format('DD/MM/YYYY')
+                                .toString()} até
+                                                                ${dayjs(
+                                                                    schedule.end.slice(
+                                                                        0,
+                                                                        10
+                                                                    )
+                                                                )
+                                                                    .format(
+                                                                        'DD/MM/YYYY'
+                                                                    )
+                                                                    .toString()}`}
                         </Typography>
                         <CardBoldTitle>Mensagem</CardBoldTitle>
                         <Typography>
@@ -130,25 +139,41 @@ function Solicitacao({
                                             {
                                                 email: {
                                                     assunto: `Aprovação de férias!`,
-                                                    mensagem: `Olá, seu gestor aprovou suas férias de ${schedule.start.slice(
-                                                        0,
-                                                        10
-                                                    )} até ${schedule.end.slice(
-                                                        0,
-                                                        10
-                                                    )}`,
+                                                    mensagem: `Olá, seu gestor aprovou suas férias de ${dayjs(
+                                                        schedule.start.slice(
+                                                            0,
+                                                            10
+                                                        )
+                                                    )
+                                                        .format('DD/MM/YYYY')
+                                                        .toString()} até ${dayjs(
+                                                        schedule.end.slice(
+                                                            0,
+                                                            10
+                                                        )
+                                                    )
+                                                        .format('DD/MM/YYYY')
+                                                        .toString()}`,
                                                     destinatario:
                                                         'guisilveira.cout@gmail.com',
                                                 },
                                                 msgWorkplace: {
                                                     id: 100089487301073,
-                                                    mensagem: `Aprovação de férias! Olá, seu gestor aprovou suas férias de ${schedule.start.slice(
-                                                        0,
-                                                        10
-                                                    )} até ${schedule.end.slice(
-                                                        0,
-                                                        10
-                                                    )}`,
+                                                    mensagem: `Aprovação de férias! Olá, seu gestor aprovou suas férias de $${dayjs(
+                                                        schedule.start.slice(
+                                                            0,
+                                                            10
+                                                        )
+                                                    )
+                                                        .format('DD/MM/YYYY')
+                                                        .toString()} até ${dayjs(
+                                                        schedule.end.slice(
+                                                            0,
+                                                            10
+                                                        )
+                                                    )
+                                                        .format('DD/MM/YYYY')
+                                                        .toString()}`,
                                                 },
                                             }
                                         )
