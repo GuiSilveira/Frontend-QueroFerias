@@ -7,7 +7,7 @@ import FuncionarioSolicitarFerias from '../pages/Funcionario/FuncionarioSolicita
 import GestorDashboard from '../pages/Gestor/GestorDashboard'
 import GestorSolicitacoes from '../pages/Gestor/GestorSolicitacoes'
 import GestorTime from '../pages/Gestor/GestorTime'
-import Login, { loginAction } from '../pages/Login'
+import Login from '../pages/Login'
 import Profile from '../pages/Profile'
 import Register from '../pages/Register'
 import Home from '../pages/Home'
@@ -25,7 +25,6 @@ const router = createBrowserRouter([
             {
                 index: true,
                 element: <Login />,
-                action: loginAction,
             },
             {
                 path: 'logout',

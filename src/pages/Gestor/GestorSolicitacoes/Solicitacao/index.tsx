@@ -1,4 +1,12 @@
-import { ListItem, Stack, Box, Typography } from '@mui/material'
+import {
+    ListItem,
+    Stack,
+    Box,
+    Typography,
+    AlertColor,
+    Alert,
+    Snackbar,
+} from '@mui/material'
 import CardBoldTitle from '../../../../components/CardBoldTitle'
 import CardBoldTitleWithStatus from '../../../../components/CardBoldTitleWithStatus'
 import CustomButton from '../../../../components/CustomButton'
@@ -7,6 +15,7 @@ import api from '../../../../services/api'
 import { EmployeeScheduleType, ScheduleType } from '../../../../types/types'
 import axios from 'axios'
 import dayjs from 'dayjs'
+import { useState } from 'react'
 
 type SolicitacaoProps = {
     schedule: ScheduleType
@@ -89,102 +98,102 @@ function Solicitacao({
                                 variant="contained"
                                 startIcon={true}
                                 onClick={async () => {
-                                    const response = await api.patch(
-                                        `/schedules/${schedule.id}`,
-                                        {
-                                            status: 'Approved',
-                                        }
-                                    )
-
-                                    if (!response) {
-                                        throw new Error('Erro ao aprovar')
-                                    }
-
-                                    const newEmployeesWithSchedule =
-                                        employeesWithSchedule.map(
-                                            (employee) => {
-                                                if (
-                                                    employee.id ===
-                                                    schedule.idEmployee
-                                                ) {
-                                                    employee.schedules.map(
-                                                        (employeeSchedule) => {
-                                                            if (
-                                                                schedule.id ===
-                                                                employeeSchedule.id
-                                                            ) {
-                                                                employeeSchedule.status =
-                                                                    'Approved'
-                                                                console.log(
-                                                                    employeeSchedule
-                                                                )
-                                                            }
-
-                                                            return employeeSchedule
-                                                        }
-                                                    )
-                                                }
-
-                                                return employee
-                                            }
-                                        )
-
-                                    setEmployeesWithSchedule(
-                                        newEmployeesWithSchedule
-                                    )
-
-                                    if (response.data) {
-                                        const emailResponse = await axios.post(
-                                            'http://localhost:8000/enviar_mensagem',
+                                    try {
+                                        const response = await api.patch(
+                                            `/schedules/${schedule.id}`,
                                             {
-                                                email: {
-                                                    assunto: `Aprovação de férias!`,
-                                                    mensagem: `Olá, seu gestor aprovou suas férias de ${dayjs(
-                                                        schedule.start.slice(
-                                                            0,
-                                                            10
-                                                        )
-                                                    )
-                                                        .format('DD/MM/YYYY')
-                                                        .toString()} até ${dayjs(
-                                                        schedule.end.slice(
-                                                            0,
-                                                            10
-                                                        )
-                                                    )
-                                                        .format('DD/MM/YYYY')
-                                                        .toString()}`,
-                                                    destinatario:
-                                                        'guisilveira.cout@gmail.com',
-                                                },
-                                                msgWorkplace: {
-                                                    id: 100089487301073,
-                                                    mensagem: `Aprovação de férias! Olá, seu gestor aprovou suas férias de $${dayjs(
-                                                        schedule.start.slice(
-                                                            0,
-                                                            10
-                                                        )
-                                                    )
-                                                        .format('DD/MM/YYYY')
-                                                        .toString()} até ${dayjs(
-                                                        schedule.end.slice(
-                                                            0,
-                                                            10
-                                                        )
-                                                    )
-                                                        .format('DD/MM/YYYY')
-                                                        .toString()}`,
-                                                },
+                                                status: 'Approved',
                                             }
                                         )
 
-                                        if (!emailResponse) {
-                                            throw new Error(
-                                                'Erro ao enviar email'
-                                            )
-                                        }
+                                        const newEmployeesWithSchedule =
+                                            employeesWithSchedule.map(
+                                                (employee) => {
+                                                    if (
+                                                        employee.id ===
+                                                        schedule.idEmployee
+                                                    ) {
+                                                        employee.schedules.map(
+                                                            (
+                                                                employeeSchedule
+                                                            ) => {
+                                                                if (
+                                                                    schedule.id ===
+                                                                    employeeSchedule.id
+                                                                ) {
+                                                                    employeeSchedule.status =
+                                                                        'Approved'
+                                                                }
 
-                                        console.log(emailResponse.data)
+                                                                return employeeSchedule
+                                                            }
+                                                        )
+                                                    }
+
+                                                    return employee
+                                                }
+                                            )
+
+                                        setEmployeesWithSchedule(
+                                            newEmployeesWithSchedule
+                                        )
+
+                                        if (response.data) {
+                                            const emailResponse =
+                                                await axios.post(
+                                                    'http://localhost:8000/enviar_mensagem',
+                                                    {
+                                                        email: {
+                                                            assunto: `Aprovação de férias!`,
+                                                            mensagem: `Olá, seu gestor aprovou suas férias de ${dayjs(
+                                                                schedule.start.slice(
+                                                                    0,
+                                                                    10
+                                                                )
+                                                            )
+                                                                .format(
+                                                                    'DD/MM/YYYY'
+                                                                )
+                                                                .toString()} até ${dayjs(
+                                                                schedule.end.slice(
+                                                                    0,
+                                                                    10
+                                                                )
+                                                            )
+                                                                .format(
+                                                                    'DD/MM/YYYY'
+                                                                )
+                                                                .toString()}`,
+                                                            destinatario:
+                                                                'guisilveira.cout@gmail.com',
+                                                        },
+                                                        msgWorkplace: {
+                                                            id: 100089487301073,
+                                                            mensagem: `Aprovação de férias! Olá, seu gestor aprovou suas férias de $${dayjs(
+                                                                schedule.start.slice(
+                                                                    0,
+                                                                    10
+                                                                )
+                                                            )
+                                                                .format(
+                                                                    'DD/MM/YYYY'
+                                                                )
+                                                                .toString()} até ${dayjs(
+                                                                schedule.end.slice(
+                                                                    0,
+                                                                    10
+                                                                )
+                                                            )
+                                                                .format(
+                                                                    'DD/MM/YYYY'
+                                                                )
+                                                                .toString()}`,
+                                                        },
+                                                    }
+                                                )
+                                        }
+                                    } catch (error) {
+                                        return error
                                     }
                                 }}
                             >

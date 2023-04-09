@@ -202,11 +202,6 @@ const Home = () => {
                 }
             })
 
-            console.log(
-                `Employee ${employee.name}`,
-                naoPossuiFeriasAprovadasNoPeriodo
-            )
-
             if (
                 naoPossuiFeriasAprovadasNoPeriodo &&
                 (dayjs().isSame(periodoDePendencia) ||
@@ -322,8 +317,6 @@ const Home = () => {
                 (dayjs().isAfter(contractDateToPermitUse.add(11, 'month')) &&
                     dayjs().isBefore(contractDateToPermitUse.add(12, 'month')))
             ) {
-                // TODO: Enviar email para o gestor e para o funcionário ok
-                // TODO: Gerar Modal avisando! ok
                 //Você está prestes a acumular período de férias!
                 setOpenModal(true)
                 ;(async function () {
@@ -369,8 +362,6 @@ const Home = () => {
         }
     }
 
-    // TODO: Refatorar
-
     // Requisito 11
     if (approvedSchedules.length > 0) {
         // acha a férias aprovada com a data mais recente dentro do array approvedSchedules e depois o início e fim das férias com a data atual para saber se o funcionário está de férias ou não
@@ -411,8 +402,6 @@ const Home = () => {
                             },
                         }
                     )
-
-                    console.log(response.data)
                 })()
             }
         }
@@ -431,8 +420,6 @@ const Home = () => {
                 (dayjs().isAfter(periodoAquisitivo.add(11, 'month')) &&
                     dayjs().isBefore(periodoAquisitivo.add(12, 'month')))
             ) {
-                // TODO: Enviar email para o gestor e para o funcionário
-                // TODO: Enviar Modal
                 //Você está prestes a acumular período de férias!
                 setOpenModal(true)
                 ;(async function () {
@@ -494,24 +481,22 @@ const Home = () => {
                             })
                             //Enviando para o funcionário
                         } catch (error) {
-                            console.log(error)
+                            return error
                         }
                     }
                 })()
-                // TODO: não permitir que vença o período
             }
         }
     }
 
-    // Fazer a verificação do gestor para ver se os funcionários tiraram férias nos últimos 11 meses
-
     const actions = [
-        'Solicitar Férias',
-        'Todas as Solicitações',
-        'Solicitações Gestor',
-        'Time Gestor',
-        'Perfil',
-        'Dashboard',
+        { title: 'Solicitar Férias', url: '/home/solicitar' },
+        { title: 'Todas as Solicitações', url: '/home/solicitacoes' },
+        { title: 'Solicitações Gestor', url: '/home/gestor/solicitacoes' },
+        { title: 'Time Gestor', url: '/home/gestor/time' },
+        { title: 'Perfil', url: '/home/profile' },
+        { title: 'Dashboard', url: '/home/gestor/dashboard' },
+        { title: 'Registrar Funcionários', url: '/home/register' },
     ]
 
     return (
@@ -546,20 +531,38 @@ const Home = () => {
                     }}
                     flexWrap="wrap"
                 >
-                    {actions.map((action) => {
+                    {actions.map((action, index) => {
                         if (
-                            userData.position === 'Employee' &&
-                            (action === 'Solicitações Gestor' ||
-                                action === 'Time Gestor' ||
-                                action === 'Dashboard')
+                            userData.position !== 'Manager' &&
+                            (action.title === 'Solicitações Gestor' ||
+                                action.title === 'Time Gestor' ||
+                                action.title === 'Dashboard')
                         )
                             return null
 
-                        console.log(action)
+                        if (
+                            userData.position !== 'Admin' &&
+                            action.title === 'Registrar Funcionários'
+                        ) {
+                            return null
+                        }
+
+                        if (
+                            userData.position === 'Admin' &&
+                            action.title !== 'Registrar Funcionários'
+                        ) {
+                            return null
+                        }
+
                         return (
-                            <DefaultCard>
-                                <DefaultTitle>{action}</DefaultTitle>
-                                <DefaultButton content={`Visitar ${action}`} />
+                            <DefaultCard key={index}>
+                                <DefaultTitle>{action.title}</DefaultTitle>
+                                <DefaultButton
+                                    content={`Visitar ${action.title}`}
+                                    onClick={() => {
+                                        navigate(action.url)
+                                    }}
+                                />
                             </DefaultCard>
                         )
                     })}

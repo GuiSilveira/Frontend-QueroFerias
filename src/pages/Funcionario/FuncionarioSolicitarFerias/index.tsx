@@ -1,15 +1,17 @@
 import {
+    Alert,
+    AlertColor,
     Box,
     CircularProgress,
     Container,
     Divider,
     MenuItem,
+    Snackbar,
     Typography,
 } from '@mui/material'
 import { DateField } from '@mui/x-date-pickers'
 import dayjs, { Dayjs } from 'dayjs'
 import { useState, useEffect } from 'react'
-import { Form, Link } from 'react-router-dom'
 import DefaultButton from '../../../components/DefaultButton'
 import DefaultCard from '../../../components/DefaultCard'
 import DefaultSelect from '../../../components/DefaultSelect'
@@ -37,7 +39,6 @@ const FuncionarioSolicitarFerias = () => {
         string | null
     >(null)
     const [managers, setManagers] = useState<any>([])
-    const [employeeManager, setEmployeeManager] = useState<any | null>(null)
     const [pendingSchedule, setPendingSchedule] = useState<ScheduleType[]>([])
     const [disableButton, setDisableButton] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(false)
@@ -47,6 +48,14 @@ const FuncionarioSolicitarFerias = () => {
     const [daysRemaining, setDaysRemaining] = useState<number>(30)
     const periodoAquisitivo = dayjs(contractDate).year(dayjs().year())
     const periodoAquisitivoFinal = dayjs(periodoAquisitivo).add(1, 'year')
+    const [openSnackbar, setOpenSnackbar] = useState<boolean>(false)
+    const [snackbarMessage, setSnackbarMessage] = useState<string>('')
+    const [snackbarSeverity, setSnackbarSeverity] =
+        useState<AlertColor>('success')
+
+    const handleClose = () => {
+        setOpenSnackbar(false)
+    }
 
     useEffect(() => {
         if (!idManager) {
@@ -59,18 +68,6 @@ const FuncionarioSolicitarFerias = () => {
                 })
 
                 setManagers(response.data)
-                setLoadingManager(false)
-            })()
-        } else {
-            ;(async () => {
-                setLoadingManager(true)
-                const response = await api.get(`/employees/${idManager}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                })
-
-                setEmployeeManager(response.data)
                 setLoadingManager(false)
             })()
         }
@@ -187,43 +184,32 @@ const FuncionarioSolicitarFerias = () => {
     }
 
     return (
-        <Container
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: {
-                    xs: 'center',
-                    md: 'flex-start',
-                },
-                alignItems: {
-                    xs: 'center',
-                    md: 'flex-start',
-                },
-                marginLeft: {
-                    md: '240px',
-                },
-                maxWidth: {
-                    md: 'calc(100% - 240px)',
-                },
-                padding: {
-                    md: '0 0 0 1rem',
-                },
-            }}
-        >
-            <Box>
-                {pendingSchedule.length > 0 ? (
-                    <DefaultTitle
-                        sx={{
-                            marginTop: '71px',
-                            marginBottom: '5px',
-                            alignSelf: 'flex-start',
-                        }}
-                    >
-                        Você já possui um agendamento pendente. Não é possível
-                        fazer mais agendamentos.
-                    </DefaultTitle>
-                ) : (
-                    <>
+        <>
+            <Container
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: {
+                        xs: 'center',
+                        md: 'flex-start',
+                    },
+                    alignItems: {
+                        xs: 'center',
+                        md: 'flex-start',
+                    },
+                    marginLeft: {
+                        md: '240px',
+                    },
+                    maxWidth: {
+                        md: 'calc(100% - 240px)',
+                    },
+                    padding: {
+                        md: '0 0 0 1rem',
+                    },
+                }}
+            >
+                <Box>
+                    {pendingSchedule.length > 0 ? (
                         <DefaultTitle
                             sx={{
                                 marginTop: '71px',
@@ -231,63 +217,75 @@ const FuncionarioSolicitarFerias = () => {
                                 alignSelf: 'flex-start',
                             }}
                         >
-                            {idManager
-                                ? 'Solicitar Férias'
-                                : 'Ops, parece que você não tem gerente associado a sua conta. Selecione o seu gerente na lista abaixo:'}
+                            Você já possui um agendamento pendente. Não é
+                            possível fazer mais agendamentos.
                         </DefaultTitle>
-                        {idManager ? (
-                            <>
-                                <Box
-                                    sx={{
-                                        marginBottom: '1rem',
-                                    }}
-                                >
-                                    <DefaultCard
-                                        width={{
-                                            xs: 'calc(100vw - 2rem)',
-                                            md: '300px',
-                                            lg: '100%',
+                    ) : (
+                        <>
+                            <DefaultTitle
+                                sx={{
+                                    marginTop: '71px',
+                                    marginBottom: '5px',
+                                    alignSelf: 'flex-start',
+                                }}
+                            >
+                                {idManager
+                                    ? 'Solicitar Férias'
+                                    : 'Ops, parece que você não tem gerente associado a sua conta. Selecione o seu gerente na lista abaixo:'}
+                            </DefaultTitle>
+                            {idManager ? (
+                                <>
+                                    <Box
+                                        sx={{
+                                            marginBottom: '1rem',
                                         }}
                                     >
-                                        <Typography
-                                            fontWeight="medium"
-                                            color="grey.500"
+                                        <DefaultCard
+                                            width={{
+                                                xs: 'calc(100vw - 2rem)',
+                                                md: '300px',
+                                                lg: '100%',
+                                            }}
                                         >
-                                            Dias de férias disponíveis
-                                        </Typography>
-                                        <Divider />
-                                        <Typography marginTop="5px">
-                                            Você possui
-                                        </Typography>
-                                        <Typography
-                                            color="primary.main"
-                                            fontWeight="bold"
-                                            fontSize="50px"
-                                        >
-                                            {daysRemaining}
-                                        </Typography>
-                                        <Typography>
-                                            dias de férias disponíveis no
-                                            período aquisitivo atual que vai de
-                                            {` ${periodoAquisitivo.format(
-                                                'DD/MM/YYYY'
-                                            )} a ${periodoAquisitivoFinal.format(
-                                                'DD/MM/YYYY'
-                                            )}`}
-                                        </Typography>
-                                    </DefaultCard>
-                                </Box>
-                                <DefaultCard
-                                    minWidth={{
-                                        xs: 'calc(100vw - 2rem)',
-                                        md: '600px',
-                                    }}
-                                    maxWidth={{
-                                        xs: 'calc(100vw - 2rem)',
-                                        md: '500px',
-                                    }}
-                                >
-                                    <Form>
+                                            <Typography
+                                                fontWeight="medium"
+                                                color="grey.500"
+                                            >
+                                                Dias de férias disponíveis
+                                            </Typography>
+                                            <Divider />
+                                            <Typography marginTop="5px">
+                                                Você possui
+                                            </Typography>
+                                            <Typography
+                                                color="primary.main"
+                                                fontWeight="bold"
+                                                fontSize="50px"
+                                            >
+                                                {daysRemaining}
+                                            </Typography>
+                                            <Typography>
+                                                dias de férias disponíveis no
+                                                período aquisitivo atual que vai
+                                                de
+                                                {` ${periodoAquisitivo.format(
+                                                    'DD/MM/YYYY'
+                                                )} a ${periodoAquisitivoFinal.format(
+                                                    'DD/MM/YYYY'
+                                                )}`}
+                                            </Typography>
+                                        </DefaultCard>
+                                    </Box>
+                                    <DefaultCard
+                                        minWidth={{
+                                            xs: 'calc(100vw - 2rem)',
+                                            md: '600px',
+                                        }}
+                                        maxWidth={{
+                                            xs: 'calc(100vw - 2rem)',
+                                            md: '500px',
+                                        }}
+                                    >
                                         <DefaultSelect
                                             value={String(diasFerias)}
                                             onChange={(event) =>
@@ -384,77 +382,124 @@ const FuncionarioSolicitarFerias = () => {
                                             content={'Solicitar Férias'}
                                             type="submit"
                                             onClick={async () => {
-                                                // TODO: Try catch aqui para tratar errors
-                                                const { data } = await api.post(
-                                                    '/schedules',
-                                                    {
-                                                        idEmployee: String(id),
-                                                        start: startDate?.format(
-                                                            'YYYY-MM-DD'
-                                                        ),
-                                                        end: endDate?.format(
-                                                            'YYYY-MM-DD'
-                                                        ),
-                                                        anticipateSalary:
-                                                            anticipateSalary ===
-                                                            'sim'
-                                                                ? true
-                                                                : false,
-                                                        employeeComment:
-                                                            mensagemFuncionario
-                                                                ? mensagemFuncionario
-                                                                : '',
-                                                        vacationDays:
-                                                            diasFerias,
-                                                        employeeContractDate:
-                                                            contractDate.slice(
-                                                                0,
-                                                                10
-                                                            ),
-                                                    }
-                                                )
-
-                                                if (data) {
-                                                    setDisableButton(true)
+                                                try {
                                                     const response =
-                                                        await axios.post(
-                                                            'http://localhost:8000/enviar_mensagem',
+                                                        await api.post(
+                                                            '/schedules',
                                                             {
-                                                                email: {
-                                                                    assunto: `Solicitação de Férias de ${name}`,
-                                                                    mensagem: `Olá, você recebeu uma solicitação de férias de ${name}. 
-                                                                    Data de início: ${startDate}
-                                                                    Data de término: ${endDate}
-                                                                    Dias de férias: ${diasFerias}
-                                                                    Mensagem do funcionário: ${mensagemFuncionario}
-                                                                    `,
-                                                                    destinatario:
-                                                                        'guisilveira.cout@gmail.com',
-                                                                },
-                                                                msgWorkplace: {
-                                                                    id: 100089487301073,
-                                                                    mensagem: `Nova Solicitação de Férias de ${name}`,
-                                                                },
+                                                                idEmployee:
+                                                                    String(id),
+                                                                start: dayjs(
+                                                                    startDate?.format(
+                                                                        'YYYY-MM-DD'
+                                                                    )
+                                                                ),
+                                                                end: dayjs(
+                                                                    endDate?.format(
+                                                                        'YYYY-MM-DD'
+                                                                    )
+                                                                ),
+                                                                anticipateSalary:
+                                                                    anticipateSalary ===
+                                                                    'sim'
+                                                                        ? true
+                                                                        : false,
+                                                                employeeComment:
+                                                                    mensagemFuncionario
+                                                                        ? mensagemFuncionario
+                                                                        : '',
+                                                                vacationDays:
+                                                                    diasFerias,
+                                                                employeeContractDate:
+                                                                    contractDate.slice(
+                                                                        0,
+                                                                        10
+                                                                    ),
                                                             }
                                                         )
+
+                                                    setOpenSnackbar(true)
+                                                    setSnackbarMessage(
+                                                        'Solicitação de férias enviada com sucesso!'
+                                                    )
+                                                    setSnackbarSeverity(
+                                                        'success'
+                                                    )
+
+                                                    if (response.data) {
+                                                        setDisableButton(true)
+                                                        const response =
+                                                            await axios.post(
+                                                                'http://localhost:8000/enviar_mensagem',
+                                                                {
+                                                                    email: {
+                                                                        assunto: `Solicitação de Férias de ${name}`,
+                                                                        mensagem: `Olá, você recebeu uma solicitação de férias de ${name}.
+                                                                        Data de início: ${startDate}
+                                                                        Data de término: ${endDate}
+                                                                        Dias de férias: ${diasFerias}
+                                                                        Mensagem do funcionário: ${mensagemFuncionario}
+                                                                        `,
+                                                                        destinatario:
+                                                                            'guisilveira.cout@gmail.com',
+                                                                    },
+                                                                    msgWorkplace:
+                                                                        {
+                                                                            id: 100089487301073,
+                                                                            mensagem: `Nova Solicitação de Férias de ${name}`,
+                                                                        },
+                                                                }
+                                                            )
+                                                    }
+                                                } catch (error: any) {
+                                                    setOpenSnackbar(true)
+                                                    setSnackbarMessage(
+                                                        'Erro ao enviar solicitação de férias'
+                                                    )
+                                                    setSnackbarSeverity('error')
                                                 }
                                             }}
                                         />
-                                    </Form>
-                                </DefaultCard>
-                            </>
-                        ) : (
-                            <SearchBar
-                                data={managers}
-                                idEmployee={id}
-                                token={token}
-                                isManager={false}
-                            />
-                        )}
-                    </>
-                )}
-            </Box>
-        </Container>
+                                    </DefaultCard>
+                                </>
+                            ) : (
+                                <SearchBar
+                                    data={managers}
+                                    idEmployee={id}
+                                    token={token}
+                                    isManager={false}
+                                />
+                            )}
+                        </>
+                    )}
+                </Box>
+            </Container>
+            <Snackbar
+                open={openSnackbar}
+                autoHideDuration={6000}
+                onClose={handleClose}
+                sx={{
+                    position: 'absolute',
+                    top: '80%',
+                    zIndex: 9999,
+                }}
+            >
+                <Alert
+                    onClose={handleClose}
+                    severity={snackbarSeverity}
+                    sx={{
+                        width: '100%',
+                        border: `1px solid ${
+                            snackbarSeverity === 'success'
+                                ? '#27AE60'
+                                : '#FF5252'
+                        }`,
+                    }}
+                >
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
+        </>
     )
 }
 

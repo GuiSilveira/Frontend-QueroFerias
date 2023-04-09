@@ -1,9 +1,12 @@
 import {
+    Alert,
+    AlertColor,
     Box,
     CircularProgress,
     Container,
     List,
     SelectChangeEvent,
+    Snackbar,
     Typography,
 } from '@mui/material'
 import CardBoldTitle from '../../../components/CardBoldTitle'
@@ -12,7 +15,6 @@ import DefaultTitle from '../../../components/DefaultTitle'
 import { useEffect, useState } from 'react'
 import DefaultModal from '../../../components/DefaultModal'
 import DefaultTextArea from '../../../components/DefaultTextArea'
-import { useUserDataStore } from '../../../store/useUserData'
 import { getAuthToken } from '../../../util/auth'
 import api from '../../../services/api'
 import Solicitacao from './Solicitacao'
@@ -36,6 +38,10 @@ const GestorSolicitacoes = () => {
         ? JSON.parse(localStorage.getItem('user') as string)
         : verifiedTokenData.id
     const [loading, setLoading] = useState(false)
+    const [openSnackbar, setOpenSnackbar] = useState<boolean>(false)
+    const [snackbarMessage, setSnackbarMessage] = useState<string>('')
+    const [snackbarSeverity, setSnackbarSeverity] =
+        useState<AlertColor>('success')
 
     const handleOpen = (schedule: any) => {
         setSelectedSchedule(schedule)
@@ -43,6 +49,10 @@ const GestorSolicitacoes = () => {
     }
     const handleClose = () => {
         setOpen(false)
+    }
+
+    const handleCloseSnackbar = () => {
+        setOpenSnackbar(false)
     }
 
     useEffect(() => {
@@ -91,88 +101,57 @@ const GestorSolicitacoes = () => {
     }
 
     return (
-        <Box>
-            <Container
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: {
-                        xs: 'center',
-                        md: 'flex-start',
-                    },
-                    alignItems: {
-                        xs: 'center',
-                        md: 'flex-start',
-                    },
-                    marginTop: '71px',
-                    marginLeft: {
-                        md: '240px',
-                    },
-                    maxWidth: {
-                        md: 'calc(100% - 240px)',
-                    },
-                    padding: {
-                        md: '0 0 0 1rem',
-                    },
-                }}
-            >
-                <DefaultTitle>Solicitações</DefaultTitle>
-                <DefaultFilter
-                    value={filter}
-                    onChange={(event: SelectChangeEvent) => {
-                        setFilter(event.target.value as string)
-                    }}
-                />
-                <List
+        <>
+            <Box>
+                <Container
                     sx={{
                         display: 'flex',
-                        flexDirection: {
-                            xs: 'column',
-                            md: 'row',
+                        flexDirection: 'column',
+                        justifyContent: {
+                            xs: 'center',
+                            md: 'flex-start',
                         },
-                        gap: '1rem',
-                        flexWrap: 'wrap',
-                        paddingRight: '1rem',
-                        paddingBottom: '1rem',
-                        width: '100%',
+                        alignItems: {
+                            xs: 'center',
+                            md: 'flex-start',
+                        },
+                        marginTop: '71px',
+                        marginLeft: {
+                            md: '240px',
+                        },
+                        maxWidth: {
+                            md: 'calc(100% - 240px)',
+                        },
+                        padding: {
+                            md: '0 0 0 1rem',
+                        },
                     }}
                 >
-                    {employeesWithSchedules.map((employee: any) => {
-                        return employee.schedules.map((schedule: any) => {
-                            if (filter === 'Todas') {
-                                return (
-                                    <Solicitacao
-                                        employeesWithSchedule={
-                                            employeesWithSchedules
-                                        }
-                                        setEmployeesWithSchedule={
-                                            setEmployeesWithSchedules
-                                        }
-                                        key={schedule.id}
-                                        schedule={schedule}
-                                        employee={employee}
-                                        handleOpen={() => {
-                                            handleOpen({
-                                                id: schedule.id,
-                                                employeeId: employee.id,
-                                                employeeName: employee.name,
-                                                startDate: schedule.start.slice(
-                                                    0,
-                                                    10
-                                                ),
-                                                endDate: schedule.end.slice(
-                                                    0,
-                                                    10
-                                                ),
-                                                employeeComment:
-                                                    schedule.employeeComment,
-                                            })
-                                        }}
-                                    />
-                                )
-                            } else if (filter === 'Aprovadas') {
-                                return (
-                                    schedule.status === 'Approved' && (
+                    <DefaultTitle>Solicitações</DefaultTitle>
+                    <DefaultFilter
+                        value={filter}
+                        onChange={(event: SelectChangeEvent) => {
+                            setFilter(event.target.value as string)
+                        }}
+                    />
+                    <List
+                        sx={{
+                            display: 'flex',
+                            flexDirection: {
+                                xs: 'column',
+                                md: 'row',
+                            },
+                            gap: '1rem',
+                            flexWrap: 'wrap',
+                            paddingRight: '1rem',
+                            paddingBottom: '1rem',
+                            width: '100%',
+                        }}
+                    >
+                        {employeesWithSchedules.map((employee: any) => {
+                            return employee.schedules.map((schedule: any) => {
+                                if (filter === 'Todas') {
+                                    return (
                                         <Solicitacao
                                             employeesWithSchedule={
                                                 employeesWithSchedules
@@ -203,197 +182,273 @@ const GestorSolicitacoes = () => {
                                             }}
                                         />
                                     )
-                                )
-                            } else if (filter === 'Reprovadas') {
-                                return (
-                                    schedule.status === 'Rejected' && (
-                                        <Solicitacao
-                                            employeesWithSchedule={
-                                                employeesWithSchedules
-                                            }
-                                            setEmployeesWithSchedule={
-                                                setEmployeesWithSchedules
-                                            }
-                                            key={schedule.id}
-                                            schedule={schedule}
-                                            employee={employee}
-                                            handleOpen={() => {
-                                                handleOpen({
-                                                    id: schedule.id,
-                                                    employeeId: employee.id,
-                                                    employeeName: employee.name,
-                                                    startDate:
-                                                        schedule.start.slice(
-                                                            0,
-                                                            10
-                                                        ),
-                                                    endDate: schedule.end.slice(
-                                                        0,
-                                                        10
-                                                    ),
-                                                    employeeComment:
-                                                        schedule.employeeComment,
-                                                })
-                                            }}
-                                        />
-                                    )
-                                )
-                            } else if (filter === 'Pendentes') {
-                                return (
-                                    schedule.status === 'Pending' && (
-                                        <Solicitacao
-                                            employeesWithSchedule={
-                                                employeesWithSchedules
-                                            }
-                                            setEmployeesWithSchedule={
-                                                setEmployeesWithSchedules
-                                            }
-                                            key={schedule.id}
-                                            schedule={schedule}
-                                            employee={employee}
-                                            handleOpen={() => {
-                                                handleOpen({
-                                                    id: schedule.id,
-                                                    employeeId: employee.id,
-                                                    employeeName: employee.name,
-                                                    startDate:
-                                                        schedule.start.slice(
-                                                            0,
-                                                            10
-                                                        ),
-                                                    endDate: schedule.end.slice(
-                                                        0,
-                                                        10
-                                                    ),
-                                                    employeeComment:
-                                                        schedule.employeeComment,
-                                                })
-                                            }}
-                                        />
-                                    )
-                                )
-                            }
-                        })
-                    })}
-                </List>
-                <DefaultModal
-                    isOpen={open}
-                    closeModal={handleClose}
-                    handleApproval={async () => {
-                        if (selectedSchedule) {
-                            const response = await api.patch(
-                                `/schedules/${selectedSchedule.id}`,
-                                {
-                                    status: 'Rejected',
-                                }
-                            )
-
-                            if (!response) {
-                                throw new Error('Erro ao rejeitar')
-                            }
-
-                            if (response.status === 200) {
-                                const emailResponse = await axios.post(
-                                    'http://localhost:8000/enviar_mensagem',
-                                    {
-                                        email: {
-                                            assunto: `Reprovação de férias`,
-                                            mensagem: `Olá, seu gestor reprovou suas férias de ${selectedSchedule.startDate.slice(
-                                                0,
-                                                10
-                                            )} até ${selectedSchedule.endDate.slice(
-                                                0,
-                                                10
-                                            )} por conta de: ${
-                                                mensagemGestor
-                                                    ? mensagemGestor
-                                                    : 'Não informado'
-                                            }`,
-                                            destinatario:
-                                                'guisilveira.cout@gmail.com',
-                                        },
-                                        msgWorkplace: {
-                                            id: 100089487301073,
-                                            mensagem: `Aprovação de férias! Olá, seu gestor aprovou suas férias de ${selectedSchedule.startDate.slice(
-                                                0,
-                                                10
-                                            )} até ${selectedSchedule.endDate.slice(
-                                                0,
-                                                10
-                                            )}`,
-                                        },
-                                    }
-                                )
-                            }
-
-                            const newEmployeesWithSchedule =
-                                employeesWithSchedules.map((employee) => {
-                                    if (
-                                        employee.id ===
-                                        selectedSchedule.idEmployee
-                                    ) {
-                                        employee.schedules.map(
-                                            (employeeSchedule) => {
-                                                if (
-                                                    selectedSchedule.id ===
-                                                    employeeSchedule.id
-                                                ) {
-                                                    employeeSchedule.status =
-                                                        'Rejected'
-                                                    console.log(
-                                                        employeeSchedule
-                                                    )
+                                } else if (filter === 'Aprovadas') {
+                                    return (
+                                        schedule.status === 'Approved' && (
+                                            <Solicitacao
+                                                employeesWithSchedule={
+                                                    employeesWithSchedules
                                                 }
+                                                setEmployeesWithSchedule={
+                                                    setEmployeesWithSchedules
+                                                }
+                                                key={schedule.id}
+                                                schedule={schedule}
+                                                employee={employee}
+                                                handleOpen={() => {
+                                                    handleOpen({
+                                                        id: schedule.id,
+                                                        employeeId: employee.id,
+                                                        employeeName:
+                                                            employee.name,
+                                                        startDate:
+                                                            schedule.start.slice(
+                                                                0,
+                                                                10
+                                                            ),
+                                                        endDate:
+                                                            schedule.end.slice(
+                                                                0,
+                                                                10
+                                                            ),
+                                                        employeeComment:
+                                                            schedule.employeeComment,
+                                                    })
+                                                }}
+                                            />
+                                        )
+                                    )
+                                } else if (filter === 'Reprovadas') {
+                                    return (
+                                        schedule.status === 'Rejected' && (
+                                            <Solicitacao
+                                                employeesWithSchedule={
+                                                    employeesWithSchedules
+                                                }
+                                                setEmployeesWithSchedule={
+                                                    setEmployeesWithSchedules
+                                                }
+                                                key={schedule.id}
+                                                schedule={schedule}
+                                                employee={employee}
+                                                handleOpen={() => {
+                                                    handleOpen({
+                                                        id: schedule.id,
+                                                        employeeId: employee.id,
+                                                        employeeName:
+                                                            employee.name,
+                                                        startDate:
+                                                            schedule.start.slice(
+                                                                0,
+                                                                10
+                                                            ),
+                                                        endDate:
+                                                            schedule.end.slice(
+                                                                0,
+                                                                10
+                                                            ),
+                                                        employeeComment:
+                                                            schedule.employeeComment,
+                                                    })
+                                                }}
+                                            />
+                                        )
+                                    )
+                                } else if (filter === 'Pendentes') {
+                                    return (
+                                        schedule.status === 'Pending' && (
+                                            <Solicitacao
+                                                employeesWithSchedule={
+                                                    employeesWithSchedules
+                                                }
+                                                setEmployeesWithSchedule={
+                                                    setEmployeesWithSchedules
+                                                }
+                                                key={schedule.id}
+                                                schedule={schedule}
+                                                employee={employee}
+                                                handleOpen={() => {
+                                                    handleOpen({
+                                                        id: schedule.id,
+                                                        employeeId: employee.id,
+                                                        employeeName:
+                                                            employee.name,
+                                                        startDate:
+                                                            schedule.start.slice(
+                                                                0,
+                                                                10
+                                                            ),
+                                                        endDate:
+                                                            schedule.end.slice(
+                                                                0,
+                                                                10
+                                                            ),
+                                                        employeeComment:
+                                                            schedule.employeeComment,
+                                                    })
+                                                }}
+                                            />
+                                        )
+                                    )
+                                }
+                            })
+                        })}
+                    </List>
+                    <DefaultModal
+                        isOpen={open}
+                        closeModal={handleClose}
+                        handleApproval={async () => {
+                            try {
+                                if (selectedSchedule) {
+                                    const response = await api.patch(
+                                        `/schedules/${selectedSchedule.id}`,
+                                        {
+                                            status: 'Rejected',
+                                        }
+                                    )
 
-                                                return employeeSchedule
+                                    if (response.status === 200) {
+                                        const emailResponse = await axios.post(
+                                            'http://localhost:8000/enviar_mensagem',
+                                            {
+                                                email: {
+                                                    assunto: `Reprovação de férias`,
+                                                    mensagem: `Olá, seu gestor reprovou suas férias de ${selectedSchedule.startDate.slice(
+                                                        0,
+                                                        10
+                                                    )} até ${selectedSchedule.endDate.slice(
+                                                        0,
+                                                        10
+                                                    )} por conta de: ${
+                                                        mensagemGestor
+                                                            ? mensagemGestor
+                                                            : 'Não informado'
+                                                    }`,
+                                                    destinatario:
+                                                        'guisilveira.cout@gmail.com',
+                                                },
+                                                msgWorkplace: {
+                                                    id: 100089487301073,
+                                                    mensagem: `Aprovação de férias! Olá, seu gestor aprovou suas férias de ${selectedSchedule.startDate.slice(
+                                                        0,
+                                                        10
+                                                    )} até ${selectedSchedule.endDate.slice(
+                                                        0,
+                                                        10
+                                                    )}`,
+                                                },
                                             }
                                         )
                                     }
 
-                                    return employee
-                                })
+                                    const newEmployeesWithSchedule =
+                                        employeesWithSchedules.map(
+                                            (employee) => {
+                                                if (
+                                                    employee.id ===
+                                                    selectedSchedule.idEmployee
+                                                ) {
+                                                    employee.schedules.map(
+                                                        (employeeSchedule) => {
+                                                            if (
+                                                                selectedSchedule.id ===
+                                                                employeeSchedule.id
+                                                            ) {
+                                                                employeeSchedule.status =
+                                                                    'Rejected'
+                                                            }
 
-                            setEmployeesWithSchedules(newEmployeesWithSchedule)
-                            setMensagemGestor('')
-                            handleClose()
-                        }
+                                                            return employeeSchedule
+                                                        }
+                                                    )
+                                                }
+
+                                                return employee
+                                            }
+                                        )
+
+                                    setEmployeesWithSchedules(
+                                        newEmployeesWithSchedule
+                                    )
+                                    setMensagemGestor('')
+                                    setOpenSnackbar(true)
+                                    setSnackbarMessage(
+                                        'Férias do funcionário reprovadas com sucesso!'
+                                    )
+                                    setSnackbarSeverity('success')
+                                    handleClose()
+                                }
+                            } catch (error) {
+                                setOpenSnackbar(true)
+                                setSnackbarMessage(
+                                    'Erro ao rejeitar férias do funcionário!'
+                                )
+                                setSnackbarSeverity('error')
+                                return error
+                            }
+                        }}
+                        approveText={'Enviar'}
+                        rejectText={'Cancelar'}
+                    >
+                        <Box marginBottom="1rem">
+                            <CardBoldTitle>Dados da Solicitação</CardBoldTitle>
+                            <CardBoldTitle>Nome</CardBoldTitle>
+                            <Typography>
+                                {selectedSchedule?.employeeName}
+                            </Typography>
+                            <CardBoldTitle>Férias</CardBoldTitle>
+                            <Typography>
+                                De {selectedSchedule?.startDate} até{' '}
+                                {selectedSchedule?.endDate}
+                            </Typography>
+                            <CardBoldTitle>Mensagem</CardBoldTitle>
+                            <Typography>
+                                {selectedSchedule?.employeeComment
+                                    ? selectedSchedule?.employeeComment
+                                    : 'Sem mensagem'}
+                            </Typography>
+                        </Box>
+                        <Box marginBottom="1rem">
+                            <CardBoldTitle>
+                                Informe o motivo da recusa
+                            </CardBoldTitle>
+                            <DefaultTextArea
+                                name="mensagemGestor"
+                                value={mensagemGestor ? mensagemGestor : ''}
+                                onChange={(event) => {
+                                    setMensagemGestor(event?.target.value)
+                                }}
+                            />
+                        </Box>
+                    </DefaultModal>
+                </Container>
+            </Box>
+            <Snackbar
+                open={openSnackbar}
+                autoHideDuration={6000}
+                onClose={handleCloseSnackbar}
+                sx={{
+                    position: 'absolute',
+                    top: '80%',
+                    zIndex: 9999,
+                }}
+            >
+                <Alert
+                    onClose={handleClose}
+                    severity={snackbarSeverity}
+                    sx={{
+                        width: '100%',
+                        border: `1px solid ${
+                            snackbarSeverity === 'success'
+                                ? '#27AE60'
+                                : '#FF5252'
+                        }`,
                     }}
-                    approveText={'Enviar'}
-                    rejectText={'Cancelar'}
                 >
-                    <Box marginBottom="1rem">
-                        <CardBoldTitle>Dados da Solicitação</CardBoldTitle>
-                        <CardBoldTitle>Nome</CardBoldTitle>
-                        <Typography>
-                            {selectedSchedule?.employeeName}
-                        </Typography>
-                        <CardBoldTitle>Férias</CardBoldTitle>
-                        <Typography>
-                            De {selectedSchedule?.startDate} até{' '}
-                            {selectedSchedule?.endDate}
-                        </Typography>
-                        <CardBoldTitle>Mensagem</CardBoldTitle>
-                        <Typography>
-                            {selectedSchedule?.employeeComment
-                                ? selectedSchedule?.employeeComment
-                                : 'Sem mensagem'}
-                        </Typography>
-                    </Box>
-                    <Box marginBottom="1rem">
-                        <CardBoldTitle>
-                            Informe o motivo da recusa
-                        </CardBoldTitle>
-                        <DefaultTextArea
-                            name="mensagemGestor"
-                            value={mensagemGestor ? mensagemGestor : ''}
-                            onChange={(event) => {
-                                setMensagemGestor(event?.target.value)
-                            }}
-                        />
-                    </Box>
-                </DefaultModal>
-            </Container>
-        </Box>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
+        </>
     )
 }
 
