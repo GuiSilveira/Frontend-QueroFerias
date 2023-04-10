@@ -329,7 +329,7 @@ const GestorSolicitacoes = () => {
                                                 },
                                                 msgWorkplace: {
                                                     id: 100089487301073,
-                                                    mensagem: `Aprovação de férias! Olá, seu gestor aprovou suas férias de ${selectedSchedule.startDate.slice(
+                                                    mensagem: `Aprovação de férias! Olá, seu gestor reprovou suas férias de ${selectedSchedule.startDate.slice(
                                                         0,
                                                         10
                                                     )} até ${selectedSchedule.endDate.slice(
@@ -425,7 +425,7 @@ const GestorSolicitacoes = () => {
             </Box>
             <Snackbar
                 open={openSnackbar}
-                autoHideDuration={6000}
+                autoHideDuration={2000}
                 onClose={handleCloseSnackbar}
                 sx={{
                     position: 'absolute',

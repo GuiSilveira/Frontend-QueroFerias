@@ -30,7 +30,9 @@ const FuncionarioSolicitarFerias = () => {
     )
     const token = getAuthToken()
     const [diasFerias, setDiasFerias] = useState<string>('')
-    const [anticipateSalary, setAnticipateSalary] = useState<string | null>('')
+    const [anticipateSalary, setAnticipateSalary] = useState<string | null>(
+        'nao'
+    )
     const [startDate, setStartDate] = useState<Dayjs | null>(dayjs(new Date()))
     const [endDate, setEndDate] = useState<Dayjs | null>(
         dayjs(new Date()).add(5, 'day')
@@ -418,6 +420,9 @@ const FuncionarioSolicitarFerias = () => {
                                                             }
                                                         )
 
+                                                    console.log(
+                                                        anticipateSalary
+                                                    )
                                                     setOpenSnackbar(true)
                                                     setSnackbarMessage(
                                                         'Solicitação de férias enviada com sucesso!'
@@ -457,6 +462,7 @@ const FuncionarioSolicitarFerias = () => {
                                                         'Erro ao enviar solicitação de férias'
                                                     )
                                                     setSnackbarSeverity('error')
+                                                    console.log(error)
                                                 }
                                             }}
                                         />
