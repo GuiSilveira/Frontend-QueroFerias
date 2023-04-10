@@ -75,10 +75,6 @@ const CardTime = ({
         dez: 0,
     }
 
-    console.log('Working: ', employeesWorking)
-    console.log('Vacation: ', employeesOnVacation)
-    console.log('Delayed: ', employeesDelayed)
-
     const employeesStatusData = [
         ...employeesWorking,
         ...employeesOnVacation,
@@ -392,8 +388,6 @@ const CardTime = ({
                                                 relatorio: type,
                                             },
                                         }).then((response) => {
-                                            console.log(response)
-
                                             const file = new File(
                                                 [response.data],
                                                 `${type}.xlsx`,
@@ -433,8 +427,6 @@ const CardTime = ({
                                             },
                                         }
                                     )
-
-                                    console.log(responseEmail)
                                 }
                             }}
                         />

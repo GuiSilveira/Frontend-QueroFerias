@@ -7,7 +7,6 @@ type ErrorPage = {
 
 export default function ErrorPage() {
     const error = useRouteError() as ErrorPage
-    console.error(error)
 
     return (
         <div id="error-page">

@@ -61,7 +61,6 @@ const GestorTime = () => {
                     }
                 )
 
-                console.log(response.data)
                 setManagerEmployees(response.data)
                 setLoading(false)
             })()
