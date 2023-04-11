@@ -304,6 +304,9 @@ const GestorSolicitacoes = () => {
                                         `/schedules/${selectedSchedule.id}`,
                                         {
                                             status: 'Rejected',
+                                            managerComment: mensagemGestor
+                                                ? mensagemGestor
+                                                : '',
                                         }
                                     )
 

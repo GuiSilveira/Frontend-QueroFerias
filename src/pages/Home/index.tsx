@@ -312,10 +312,20 @@ const Home = () => {
         ) {
             if (
                 dayjs().isSame(
-                    dayjs(contractDateToPermitUse).add(11, 'month')
+                    dayjs(contractDateToPermitUse)
+                        .add(11, 'month')
+                        .year(dayjs().year())
                 ) ||
-                (dayjs().isAfter(contractDateToPermitUse.add(11, 'month')) &&
-                    dayjs().isBefore(contractDateToPermitUse.add(12, 'month')))
+                (dayjs().isAfter(
+                    contractDateToPermitUse
+                        .add(11, 'month')
+                        .year(dayjs().year())
+                ) &&
+                    dayjs().isBefore(
+                        contractDateToPermitUse
+                            .add(12, 'month')
+                            .year(dayjs().year())
+                    ))
             ) {
                 //Você está prestes a acumular período de férias!
                 setOpenModal(true)

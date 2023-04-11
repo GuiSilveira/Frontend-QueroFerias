@@ -420,9 +420,6 @@ const FuncionarioSolicitarFerias = () => {
                                                             }
                                                         )
 
-                                                    console.log(
-                                                        anticipateSalary
-                                                    )
                                                     setOpenSnackbar(true)
                                                     setSnackbarMessage(
                                                         'Solicitação de férias enviada com sucesso!'
@@ -462,7 +459,6 @@ const FuncionarioSolicitarFerias = () => {
                                                         'Erro ao enviar solicitação de férias'
                                                     )
                                                     setSnackbarSeverity('error')
-                                                    console.log(error)
                                                 }
                                             }}
                                         />
